@@ -1,4 +1,4 @@
-#$Id: Changes,v 1.15 2003/08/13 21:38:54 jay.powers Exp $
+#$Id: Changes,v 1.16 2003/10/08 22:37:18 jay.powers Exp $
 Revision history for Perl extension Business::FedEx::DirectConnect.
 
 0.01  Tue Sept  3 10:58:19 2002
@@ -127,4 +127,8 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 0.18 08/13/03
         - Line 133 warning for non numeric values
         - Line 132 new regex for double hyphens (#-#-#)
+        
+0.19 10/06/03
+        - Added a errcode function to hold the FedEx Error Code int
+        - Added a has_required function to check for FedEx required fields
 
