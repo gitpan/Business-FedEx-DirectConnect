@@ -1,5 +1,5 @@
 # FedEx::Constants
-#$Id: Constants.pm,v 1.3 2003/01/12 18:39:36 jay.powers Exp $
+#$Id: Constants.pm,v 1.5 2003/02/09 03:41:59 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 #
@@ -12,8 +12,8 @@ require Exporter;
 use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
-@EXPORT = qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.06'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
+@EXPORT = qw($FE_RE $FE_SE $FE_TT $FE_RQ);
+$VERSION = '0.07';
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
 #1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
@@ -51,44 +51,6 @@ our $FE_RQ = {
 5000 => [0,10,498,3025,24,29],
 5001 => [0,10,498,3025,24,29]
 };
-
-our $FE_ER = {
-0 => 'API_OK',
--1 => 'API_SUCCESS',
--8 => 'API_NOT_INIT_ERROR',# FedExAPIClient.dll was not initialized.
--24 => 'API_INIT_ERROR',# Error trying to initialize FedExAPIClient.dll
--2201 => 'API_UNKNOWN_HOST_EXCEPTION',# Invalid IP Address. Insure the IP Address for ATOM is correct.
--2202 => 'API_UNABLE_TO_OPEN_SOCKET',# Invalid IP Address or port for the ATOM you are trying to connect with, or the ATOM you are trying to connect with is not running.
--2203 => 'API_SET_TIMEOUT_FAILED',# Setting the read timeout you requested failed. Check your timeout value.
--2204 => 'API_UNABLE_TO_OPEN_OUTPUTSTREAM',# Unable to obtain resources necessary for communicating with the server. Try closing some applications.
--2205 => 'API_UNABLE_TO_OPEN_INPUTSTREAM',# Unable to obtain resources necessary for communicating with the server. Try closing some applications.
--2206 => 'API_ERROR_READING_REPLY',# The connection to FedEx timed out before receiving all of the reply.
--2207 => 'API_ERROR_READING_HEADER',# The connection to FedEx closed before receiving any of the reply. This could also result from a timeout.
--2208 => 'API_ERROR_READING_INPUT',# Contact FedEx.
--2209 => 'API_ENCODING_EXCEPTION',# Contact FedEx.
--2210 => 'API_UNKNOWN_HOST_EXCEPTION_CLIENT',# Unable to determine the IP Address of this system
--2211 => 'API_HEADER_INTERPRETATION_ERROR',# Invalid data received in reply.
--2212 => 'API_ZERO_LENGTH_REPLY',# The reply contained no data.
--2213 => 'API_CLIENT_REPLY_BUFFER_TOO_SHORT',# The buffer for returning the reply is not large enough to contain the entire reply.
--2214 => 'API_ERROR_INVALID_STATUS',# The reply contained invalid data.
--2215 => 'API_ERROR_SENDING_REQUEST',# The communications channel may have been inadvertently closed.
--2217 => 'API_THREAD_INTERRUPTED_EXCEPTION',# The transaction thread was interrupted before it finished. X -
--2220 => 'API_REQUEST_CONTAINED_NO_DATA',# Unable to close socket handle.
--2221 => 'API_UNABLE_TO_CLOSE_SOCKET',# Unable to destroy socket handle.
--2222 => 'API_ATOM_ADMIN_PORT_TOO_HIGH',# An attempt was made to set Atom’s Admin port to a value greater than 65535.
--2223 => 'API_ATOM_ADMIN_PORT_TOO_LOW',# An attempt was made to set Atom’s Admin port to a value less than 0.
--2224 => 'API_UNABLE_TO_DESTROY_SOCKET',# Unable to destroy socket handle.
--2256 => 'API_NOT_INSTALLED',# API is not installed.
--3000 => 'GATEWAY_DOWN', #The FedEx Gateway is down. Try again later.
--3001 => 'GATEWAY_COMM_ERROR', #The FedEx Gateway tried to communicate with a server which is down or the transaction contained no data.
--3002 => 'GATEWAY_VALIDATION_ERROR', #The FedEx Gateway could not validate this transaction.
--3003 => 'GATEWAY_XCTN_NOT_RECOGNIZED', #The FedEx Gateway received an invalid transaction.
--3004 => 'GATEWAY_ACCESS_DENIED', #The FedEx Gateway denied access for this transaction.
--3005 => 'GATEWAY_USERID_NOT_FOUND', #The FedEx Gateway could not validate the user id for this transaction.
--3006 => 'GATEWAY_DATA_FORMAT_ERROR', #The transaction format is invalid.
--3007 => 'GATEWAY_UNKNOWN_ROUTE_ID' #The Universal Transaction Identifier (Route ID) was unknown to the FedEx Gateway.
-};
-
 
 our $FE_RE = {
 0 => 'transaction_code',

@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#$Id: ship.pl,v 1.2 2003/01/08 20:11:56 jay.powers Exp $
+#$Id: ship.pl,v 1.3 2003/02/09 03:39:21 jay.powers Exp $
 use strict;
 use Business::FedEx::DirectConnect;
 
@@ -26,7 +26,7 @@ $t->set_data(2016,
 'recipient_state' => 'Ma',
 'recipient_postal_code' => '02116',
 'recipient_phone_Number' => '6173335555',
-'weight_units' => 'lBs',
+'weight_units' => 'LBS',
 'sender_country_code' => 'US',
 'recipient_country' => 'US',
 'sender_phone_Number' => '6175556985',

@@ -1,13 +1,12 @@
 Business/FedEx/DirectConnect version 0.05
-$Id: README,v 1.2 2003/01/08 20:11:42 jay.powers Exp $
+$Id: README,v 1.3 2003/02/09 04:21:48 jay.powers Exp $
 =========================================
 This module is an alternative to using the FedEx Ship Manager API.  
 Business::FedEx::DirectConnect will provide the necessary communication using LWP and 
 Crypt::SSLeay.
 The main advantage is you will no longer need to install the JRE dependant API 
 provided by FedEx.  Instead, data is POST(ed) directly to the FedEx transaction servers.
-Additionally, Business::FedEx::DirectConnect allows full "non-Win32" functionality. In the 
-previous version, non-windows users had to proxy to a windows box.
+Additionally, Business::FedEx::DirectConnect allows full "non-Win32" functionality.
 
 Please also see the examples in the examples dir.
 

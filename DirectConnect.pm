@@ -1,5 +1,5 @@
 # FedEx::DirectConnect
-#$Id: DirectConnect.pm,v 1.3 2003/01/12 18:39:36 jay.powers Exp $
+#$Id: DirectConnect.pm,v 1.5 2003/02/09 04:07:44 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 # 
@@ -8,10 +8,10 @@
 
 package Business::FedEx::DirectConnect; #must be in Business/FedEx
 
-use Business::FedEx::Constants qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
+use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 use strict;
 
@@ -46,34 +46,18 @@ sub transaction {
 		}
 	}
 	if (!$self->{sbuf}) {		
-			$self->errstr("Error: You must provide data to send to FedEx.");
-			return 0;
-	}
-	print "Sending ". $self->{sbuf} . "\n" if ($self->{Debug});
-	my $bufferLength = length($self->{sbuf});
-	use LWP::UserAgent;
-	my $ua = LWP::UserAgent->new(timeout => 5);
-	my $len = length($self->{sbuf});
-	
-	# Create a request
-	my $req = HTTP::Request->new(POST => $self->{uri});
-	$req->header('Host' => $self->{host}
-	,'Referer' => $self->{referer}
-	,'Accept' => "image/gif,image/jpeg,image/pjpeg,text/plain,text/html,*/*"
-	,'Content-Type' => "image/gif"
-	,'Content-Length' => $bufferLength);	
-	$self->{sbuf} .= '99,""' unless ($self->{sbuf} =~ /99,\"\"$/);
-	$req->content($self->{sbuf});
-	print $req->as_string() if ($self->{Debug});
-	# Pass request to the user agent and get a response back
-	my $res = $ua->request($req);	
-	# Check the outcome of the response
-	if ($res->is_success) {
-		$self->{rbuf} = $res->content;
-	} else {
-		$self->errstr("Request Error: " . $res->status_line);
+		$self->errstr("Error: You must provide data to send to FedEx.");
 		return 0;
 	}
+	if (!$self->{acc}) {
+		$self->errstr("Error: You must provide a valid FedEx account number.");
+		return 0;
+	}
+	if (!$self->{acc}) {
+			$self->errstr("Error: You must provide a valid FedEx metter number.");
+			return 0;
+	}
+	$self->_send();	# send POST to FedEx
 	$self->{rbuf} =~ s/\s+$//g; # get rid of the extra spaces
 	$self->_split_data();
 	# Check for Errors from FedEx
@@ -119,18 +103,45 @@ sub _split_data {
 	my @fedex_response = split(//, $self->{rstring});
 	foreach(@fedex_response){
 	   $field_data[$count] = $field_data[$count].$_;
-	   if($field_data[$count] =~ /\d+,\".*\"$/){
+	   if($field_data[$count] =~ /\d+\-?\d?,\".*\"$/){ # allows for FedEx values with dashes. Added by JTER
 			$count++;
 	 }
 	}
 	print "Return String " . $self->{rstring} . "\n" if ($self->{Debug});
 	foreach (@field_data) 
 	{
-		/([0-9]+),\"(.*)\"/; 
+		/([0-9]+\-?\d?),\"(.*)\"/; # allows for FedEx values with dashes.  Added by JTER 
 		#print $1 ." = " . $2 . "\n";
 		$self->{rHash}->{$1} = $2 if defined($1);
 	}
 }
+
+sub _send {	
+	my $self = shift;	
+	my $ua = LWP::UserAgent->new(timeout => 5);
+	my $len = length($self->{sbuf});
+	print "Sending ". $self->{sbuf} . "\n" if ($self->{Debug});
+	my $bufferLength = length($self->{sbuf});
+	my $req = HTTP::Request->new(POST => $self->{uri}); # Create a request
+	$req->header('Host' => $self->{host}
+	,'Referer' => $self->{referer}
+	,'Accept' => "image/gif,image/jpeg,image/pjpeg,text/plain,text/html,*/*"
+	,'Content-Type' => "image/gif"
+	,'Content-Length' => $bufferLength);	
+	$self->{sbuf} .= '99,""' unless ($self->{sbuf} =~ /99,\"\"$/);
+	$req->content($self->{sbuf});
+	print $req->as_string() if ($self->{Debug});
+	# Pass request to the user agent and get a response back
+	my $res = $ua->request($req);	
+	# Check the outcome of the response
+	if ($res->is_success) {
+		$self->{rbuf} = $res->content;
+	} else {
+		$self->errstr("Request Error: " . $res->status_line);
+		return 0;
+	}
+}
+
 
 # array of all the required fields
 sub required {
@@ -145,7 +156,7 @@ sub required {
 # print or create a label
 sub label {
 	my $self = shift;
-	$self->{rbinary} =~ s/"99.*$// if ($self->{rbinary}); #"
+	$self->{rbinary} =~ s/"99.*$// if ($self->{rbinary});
 	$self->{rbinary} =~ s/\%([0-9][0-9])/chr(hex("0x$1"))/eg if ($self->{rbinary});	
 	if (@_) {
 		my $file = shift;
@@ -252,17 +263,19 @@ Business::FedEx::DirectConnect will provide the necessary communication using LW
 Crypt::SSLeay.
 The main advantage is you will no longer need to install the JRE dependant API 
 provided by FedEx.  Instead, data is POST(ed) directly to the FedEx transaction servers.
-Additionally, Business::FedEx::DirectConnect allows full "non-Win32" functionality. In the 
-previous version, non-windows users had to proxy to a windows box.
+Additionally, Business::FedEx::DirectConnect allows full "non-Win32" functionality.
 
 =head1 REQUIREMENTS
 
 In order to submit a transaction to FedEx's Gateway server you must have a valid
-FedEx Account Number an other unique identifier and a FedEx Meter Number.  To gain access
-and receive a Meter Number you must send a Subcribe request to FedEx containing you FedEx
-account number and contact information. 
-This module uses LWP to POST this information so it is a requirement to have LWP installed.  
-Also, you will need a SSL encrytion.  I recomend installing Crypt::SSLeay 
+FedEx Account Number, an other unique identifier and a FedEx Meter Number.  To gain access
+and receive a Meter Number you must send a Subscribe request to FedEx containing your FedEx
+account number and contact information.  FedEx has two API servers a live one 
+(https://gateway.fedex.com/GatewayDC) and a beta for testing (https://gatewaybeta.fedex.com/GatewayDC).
+You will need to subscribe to each server you intend to use.  FedEx will also require you
+to send a batch of data to their live server in order to become certified for live labels.
+This module uses LWP to POST request information so it is a requirement to have LWP installed.  
+Also, you will need SSL encryption to access https URIs.  I recommend installing Crypt::SSLeay 
 Please refer to the FedEx documentation at http://www.fedex.com/globaldeveloper/shipapi/
 Here you will find more information about using the FedEx API.  You will need to know
 what UTI to use to send a request.
@@ -281,7 +294,7 @@ Here is a sample Subscription Transaction
 	) or die $t->errstr;
 
 
-This call will return a FedEx Meter number so you can use the test server.
+This call will return a FedEx Meter number so you can use the FedEx API.
 
 =head1 FedEx UTI
 
@@ -347,7 +360,7 @@ Method to return the required fields for a given FedEx UTI.
 
 =item $t->transaction()
 
-Send transaction to FedEx.  Returns the full reply from FedEx
+Send transaction to FedEx.  Returns the full reply from FedEx.
 
 =item $t->label('someLabel.png')
 
@@ -361,7 +374,7 @@ the C<FedEx::Constants> $FE_RE hash to see all possible values.
 
 =item $t->rbuf()
 
-Returns the undecoded string portion of the FedEx reply.
+Returns the decoded string portion of the FedEx reply.
 
 =item $t->hash_ret()
 
@@ -396,3 +409,10 @@ to contact me.
 C<Business::FedEx::Constants>
 
 =cut
+
+
+
+
+Thanks,
+Jay Powers
+http://www.vermonster.com 
