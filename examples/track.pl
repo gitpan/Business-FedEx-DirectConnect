@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#$Id: track.pl,v 1.4 2003/04/12 16:58:28 jay.powers Exp $
+#$Id: track.pl,v 1.5 2003/06/06 22:28:48 jay.powers Exp $
 use Business::FedEx::DirectConnect;
 use strict;
 my $t = new Business::FedEx::DirectConnect(uri=>'https://gatewaybeta.fedex.com/GatewayDC'

@@ -1,5 +1,5 @@
 # FedEx::DirectConnect
-#$Id: DirectConnect.pm,v 1.9 2003/04/12 16:58:07 jay.powers Exp $
+#$Id: DirectConnect.pm,v 1.10 2003/06/06 22:27:47 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 # 
@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.12';
+$VERSION = '0.14';
 
 use strict;
 
@@ -46,7 +46,7 @@ sub set_data {
 	$self->{sbuf} .= '498,"' .$self->{meter}. '"' if ($self->{meter});	
 	foreach (keys %args) {
 		if (/^[0-9]+\-?\d?$/) { #let users use the hyphenated number fields
-			$self->{sbuf} .= join(',',$_,'"'.$args{$_}.'"');
+			$self->{sbuf} .= join(',',$_,'"'.$args{$_}.'"') if exists $FE_RE->{$_};
 		} else {
 			$self->{sbuf} .= join(',',$FE_SE->{lc($_)},'"'.$args{$_}.'"') if exists $FE_SE->{lc($_)};
 		}
@@ -261,13 +261,13 @@ Business::FedEx::DirectConnect - FedEx Ship Manager Direct Connect
 
 =head1 DESCRIPTION
 
-This module provides the necessary requirements to send transactions to FedEx's
+This module provides the necessary means to send transactions to FedEx's
 Ship Manager Direct API.  Precautions have been taken to enforce FedEx's API guidelines
 to allow for all transaction types.
 This module is an alternative to using the FedEx Ship Manager API ATOM product.
-Business::FedEx::DirectConnect will provide the same communication using LWP and 
+Business::FedEx::DirectConnect will provide the same communication using LWP and
 Crypt::SSLeay.
-The main advantage is you will no longer need to install the JRE dependant API 
+The main advantage is you will no longer need to install the JRE dependant API
 provided by FedEx.  Instead, data is POST(ed) directly to the FedEx transaction servers.
 
 When using this module please keep in mind FedEx will occasionally change some of the 
@@ -332,14 +332,12 @@ uti  = request / reply Carrier Description
 	2017 = 022 / 122 FDXE Global Rate-A-Package
 	2018 = 019 / 119 FDXE Service Availability
 	2024 = 025 / 125 ALL Rate Available Services
-	2025 = 410 / 510 ALL FedEx Locator
-	3000 = 021 / 121 FDXG FedEx Ground Ship-A-Package
+	3000 = 021 / 121 FDXE FedEx Ground Ship-A-Package
 	3001 = 023 / 123 FDXG FedEx Ground Delete-A-Package
 	3003 = 211 / 311 ALL Subscription
 	3004 = 022 / 122 FDXG Global Rate-A-Package
 	5000 = 402 / 502 ALL Track By Number, Destination, Ship Date, and Reference
 	5001 = 405 / 505 ALL Signature Proof of Delivery
-	5002 = 403 / 503 ALL Track By Number, Destination, Ship Date, and Reference
 
 
 =head1 COMMON METHODS
@@ -406,7 +404,7 @@ Returns a hash of the FedEx reply values
 
 =head1 IDEAS/TODO
 
-Build methods for each type of transaction so you don't need to 
+Build methods for each type of transaction so you don't need to
 know UTIs and other FedEx codes.
 FedEx Express Ship-A-Package UTI 2016 would be called via
 $object->FDXE_ship();

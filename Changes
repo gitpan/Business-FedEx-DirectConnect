@@ -1,4 +1,4 @@
-#$Id: Changes,v 1.9 2003/04/12 16:58:07 jay.powers Exp $
+#$Id: Changes,v 1.10 2003/06/06 22:27:47 jay.powers Exp $
 Revision history for Perl extension Business::FedEx::DirectConnect.
 
 0.01  Tue Sept  3 10:58:19 2002
@@ -108,3 +108,7 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 		3090 last_ground_dropoff
 		3091 last_ground_dropoff_sat
 		3092 ground_service_flag
+ 
+0.14 06/06/03
+        - Added hash look up for $FE_RE in set_data
+        
