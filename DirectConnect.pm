@@ -1,5 +1,5 @@
 # FedEx::DirectConnect
-#$Id: DirectConnect.pm,v 1.8 2003/03/06 20:54:24 jay.powers Exp $
+#$Id: DirectConnect.pm,v 1.9 2003/04/12 16:58:07 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 # 
@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.11';
+$VERSION = '0.12';
 
 use strict;
 
@@ -48,7 +48,7 @@ sub set_data {
 		if (/^[0-9]+\-?\d?$/) { #let users use the hyphenated number fields
 			$self->{sbuf} .= join(',',$_,'"'.$args{$_}.'"');
 		} else {
-			$self->{sbuf} .= join(',',$FE_SE->{lc($_)},'"'.$args{$_}.'"');
+			$self->{sbuf} .= join(',',$FE_SE->{lc($_)},'"'.$args{$_}.'"') if exists $FE_SE->{lc($_)};
 		}
 	}
 	$self->{sbuf} .= '99,""';
@@ -63,7 +63,7 @@ sub transaction {
 	}
 	if (!exists $self->{UTI}) { # Find the UTI
 		my $tmp = $self->{sbuf};
-		$tmp =~ s/0,"([0-9]*).*"/$1/;
+		$tmp =~ s/0,"([0-9]+).+"/$1/;
 		for my $utis (keys %{$FE_TT}) {
 			 for (@{$FE_TT->{$utis}}) {
 				$self->{UTI} = $utis if ($_ eq $tmp);
@@ -265,7 +265,7 @@ This module provides the necessary requirements to send transactions to FedEx's
 Ship Manager Direct API.  Precautions have been taken to enforce FedEx's API guidelines
 to allow for all transaction types.
 This module is an alternative to using the FedEx Ship Manager API ATOM product.
-Business::FedEx::DirectConnect will provide the necessary communication using LWP and 
+Business::FedEx::DirectConnect will provide the same communication using LWP and 
 Crypt::SSLeay.
 The main advantage is you will no longer need to install the JRE dependant API 
 provided by FedEx.  Instead, data is POST(ed) directly to the FedEx transaction servers.
@@ -276,9 +276,9 @@ to check out changes when possible.  I document all the changes in a "Changes" l
 
 =head1 REQUIREMENTS
 
-In order to submit a transaction to FedEx's Gateway server you must have a valid
+To submit a transaction to FedEx's Gateway server you must have a valid
 FedEx Account Number and a FedEx Meter Number.  To gain access
-and receive a Meter Number you must send a Subscribe request to FedEx containing your FedEx
+and receive a Meter Number you must send a Subscribe () request to FedEx containing your FedEx
 account number and contact information.  There is an example of this request below.
 FedEx has two API servers a live one (https://gateway.fedex.com/GatewayDC) and a 
 beta for testing (https://gatewaybeta.fedex.com/GatewayDC).
@@ -332,12 +332,14 @@ uti  = request / reply Carrier Description
 	2017 = 022 / 122 FDXE Global Rate-A-Package
 	2018 = 019 / 119 FDXE Service Availability
 	2024 = 025 / 125 ALL Rate Available Services
-	3000 = 021 / 121 FDXE FedEx Ground Ship-A-Package
+	2025 = 410 / 510 ALL FedEx Locator
+	3000 = 021 / 121 FDXG FedEx Ground Ship-A-Package
 	3001 = 023 / 123 FDXG FedEx Ground Delete-A-Package
 	3003 = 211 / 311 ALL Subscription
 	3004 = 022 / 122 FDXG Global Rate-A-Package
 	5000 = 402 / 502 ALL Track By Number, Destination, Ship Date, and Reference
 	5001 = 405 / 505 ALL Signature Proof of Delivery
+	5002 = 403 / 503 ALL Track By Number, Destination, Ship Date, and Reference
 
 
 =head1 COMMON METHODS

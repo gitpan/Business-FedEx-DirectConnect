@@ -1,7 +1,7 @@
-#$Id: Changes,v 1.8 2003/03/16 20:32:51 jay.powers Exp $
+#$Id: Changes,v 1.9 2003/04/12 16:58:07 jay.powers Exp $
 Revision history for Perl extension Business::FedEx::DirectConnect.
 
-0.01  Tue Sep  3 10:58:19 2002
+0.01  Tue Sept  3 10:58:19 2002
 	- original version; created by h2xs 1.21 with options
 		-X -n Business::FedEx::DirectConnect
 
@@ -15,7 +15,7 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 	- UTI 3000 changed to FDXE
 	
 0.04 09/23/2002
-	- Fixex a few of the codes in Constants
+	- Fixed a few of the codes in Constants
 	- FedEx Transaction Error was not working properly
 	- checked for (99,"") request terminator when sending a transaction.
 	
@@ -32,15 +32,15 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
         - Fixed parsing issue with FedEx data to allow for return values with dashes
         - Thanks JTER
         - Removed the FE_ER hash no need for this with ATOM server
-        - Fixes for perl 5.8
+        - Fixes for Perl 5.8
 
 0.09 02/23/2003
 	- Removed debug syntax
 	
 0.11 03/22/2003
-	- Support for new service 2024 "Rate Availible Services"
+	- Support for new service 2024 "Rate Available Services"
 	- Added field 99 "end_of_record" tag
-	- Addedd tags following most current FedEx documentation
+	- Added tags following most current FedEx documentation
 		1346 emerge_shipment_identifier
 		1347 emerge_merchant_identifier
 		1359 sed_legend_number
@@ -61,3 +61,50 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 		1709 disp_exception
 		1710 cartage_agent
 		1718 packaging_alpha_type_description
+		
+0.12 04/12/2003
+	- Added new service 5002 "Track By Number, Destination, Ship Date, and Reference"
+		Hopefully FedEx will still support the original 5000 service for tracking
+	- Added new service 2025 "FedEx Locator" 
+		Allows you to find FedEx locations via phone, zip or address
+	- Added tags following most current FedEx documentation
+		1159 scan_description
+		1160 scan_location_city
+		1161 scan_location_state
+		1162 scan_date
+		1163 scan_time
+		1164 scan_location_country
+		1339 estimated_delivery_date
+		1340 estimated_delivery_time
+		1534 detail_scan_indicator
+		1535 paging_token
+		1536 number_of_relationships
+		1537 search_relationship_string
+		1538 search_relationship_type_code
+		1562 fedex_staffed_location_flag
+		1563 fedex_self_service_location_indicator
+		1564 fasc
+		1565 latest_express_dropoff_flag
+		1566 express_dropoff_after_time
+		1567 fedex_location_intersection_street_address
+		1568 distance
+		1569 hours_of_operation
+		1570 hours_of_operation_sat
+		1571 last_express_dropoff
+		1572 last_express_dropoff_sat
+		1573 express_service_flag
+		1574 location_count
+		1575 fedex_location_business_name
+		1576 fedex_location_business_type
+		1577 fedex_location_city
+		1578 fedex_location_state
+		1579 fedex_location_postal_code
+		1580 dangerous_goods_flag
+		1581 saturday_service_flag
+		1582 begin_date
+		1583 end_date
+		1584 tracking_groups
+		1718 package_type_description
+		3090 last_ground_dropoff
+		3091 last_ground_dropoff_sat
+		3092 ground_service_flag
