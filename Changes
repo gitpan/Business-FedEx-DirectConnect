@@ -65,7 +65,7 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 0.12 04/12/2003
 	- Added new service 5002 "Track By Number, Destination, Ship Date, and Reference"
 		Hopefully FedEx will still support the original 5000 service for tracking
-	- Added new service 2025 "FedEx Locator" 
+	- Added new service 2025 "FedEx Locater" 
 		Allows you to find FedEx locations via phone, zip or address
 	- Added tags following most current FedEx documentation
 		1159 scan_description
@@ -110,5 +110,9 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 		3092 ground_service_flag
  
 0.14 06/06/03
-        - Added hash look up for $FE_RE in set_data
+        - Added hash exists look up for $FE_RE in set_data
+        
+0.15 06/10/03
+        - Changed _split_data regex to /s to allow . to match new lines
+                Needed this for Ground Manifests
         

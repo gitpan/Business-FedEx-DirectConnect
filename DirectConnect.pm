@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.14';
+$VERSION = '0.15';
 
 use strict;
 
@@ -91,17 +91,17 @@ sub transaction {
 			$self->errstr("FedEx Transaction Error: " . $self->{rHash}->{3});
 			return undef;
 		}
+                return 1;
 	} else {
-		return undef;
+	        return undef;
 	}
-	return 1;
 }
 
 
 # Send POST request to FedEx API
 sub _send {	
     my $self = shift;
-	my $ua = LWP::UserAgent->new(timeout => 5);
+	my $ua = LWP::UserAgent->new(timeout => 10);
 	my $len = length($self->{sbuf});
 	print "Sending ". $self->{sbuf} . "\n" if ($self->{Debug});
 	my $bufferLength = length($self->{sbuf});
@@ -133,11 +133,10 @@ sub _split_data {
 	my $count=0;
 	my @field_data;
 	($self->{rstring}, $self->{rbinary}) = split("188,\"", $self->{rbuf});
-	$self->{rstring} =~ s/\s{2,}/ /g; # get rid of any extra spaces
 	print "Return String " . $self->{rstring} . "\n" if ($self->{Debug});
 	my $st_key = 0;	# start the first key at 0
 	foreach (split(/,"/, $self->{rstring})) {
-		/(.*)"([0-9]+\-?\d?)/; # allows for FedEx values with dashes. Added by JTER
+		/(.*)"([0-9]+\-?\d?)/s; # allows for FedEx values with dashes. Added by JTER
 		next unless defined $1;
 		next if ($st_key == 99);
 		$self->{rHash}->{$st_key} = $1;
