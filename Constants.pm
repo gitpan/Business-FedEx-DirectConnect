@@ -1,5 +1,5 @@
 # FedEx::Constants
-#
+#$Id$
 # Copyright (c) 2002 Jay Powers
 # All rights reserved.
 #
@@ -13,7 +13,7 @@ use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
 @EXPORT = qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.04'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
+$VERSION = '0.05'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
 #1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
@@ -251,8 +251,8 @@ our $FE_RE = {
 1193 => 'ship_delete_message',
 1195 => 'payer_country_code',
 1200 => 'hold_at_location_hal_flag',
-1201 => 'senders_email_address',
-1202 => 'recipients_email_address',
+1201 => 'sender_email_address',
+1202 => 'recipient_email_address',
 1203 => 'optional_ship_alert_message',
 1204 => 'ship_alert_email_address',
 1206 => 'ship_alert_notification_flag',
@@ -367,6 +367,24 @@ our $FE_RE = {
 1478 => 'spod_ground_recipient_zip_postal_code',
 1479 => 'spod_ground_recipient_country',
 1480 => 'more_information',
+1507 => 'list_total_surcharge_amount',
+1525 => 'effective_net_discount',
+1528 => 'list_net_charge_amount',
+1529 => 'rate_indicator_1_numeric_valid_values',
+1530 => 'list_base_rate_amount',
+1531 => 'list_total_discount_amount',
+1532 => 'list_total_rebate_amount',
+1551 => 'delivery_notification_flag',
+1552 => 'language_code',
+1553 => 'shipper_delivery_notification_flag',
+1554 => 'shipper_ship_alert_flag',
+1555 => 'shipper_language_code',
+1556 => 'recipient_delivery_notification_flag',
+1557 => 'recipient_ship_alert_flag',
+1558 => 'recipient_language_code',
+1559 => 'broker_delivery_notification_flag',
+1560 => 'broker_ship_alert_flag',
+1561 => 'broker_language_code',
 1701 => 'track_status',
 1702 => 'proof_of_delivery_flag',
 1704 => 'service_type_description',

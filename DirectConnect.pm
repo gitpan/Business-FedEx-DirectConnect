@@ -1,8 +1,8 @@
 # FedEx::DirectConnect
-#
+#$Id$
 # Copyright (c) 2002 Jay Powers
 # All rights reserved.
-#
+# 
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself
 
@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.04'; # $Id: DirectConnect.pm,v 1.1.1.1 2002/09/10 13:14:10 jay.powers Exp 
+$VERSION = '0.05'; # $Id: DirectConnect.pm,v 1.1.1.1 2002/09/10 13:14:10 jay.powers Exp 
 
 use strict;
 
@@ -30,6 +30,8 @@ sub new {
 				,@_ };
 	bless ($self, $class);
 }
+# Check the fedex connection
+sub connection
 # Send a call to FedEx
 sub transaction {
 	my $self = shift;
@@ -52,7 +54,7 @@ sub transaction {
 	print "Sending ". $self->{sbuf} . "\n" if ($self->{Debug});
 	my $bufferLength = length($self->{sbuf});
 	use LWP::UserAgent;
-	my $ua = LWP::UserAgent->new;
+	my $ua = LWP::UserAgent->new(timeout => 5);
 	my $len = length($self->{sbuf});
 	
 	# Create a request
@@ -129,7 +131,7 @@ sub _split_data {
 	{
 		/([0-9]+),\"(.*)\"/; 
 		#print $1 ." = " . $2 . "\n";
-		$self->{rHash}->{$1} = $2 if ($1);
+		$self->{rHash}->{$1} = $2 if defined($1);
 	}
 }
 

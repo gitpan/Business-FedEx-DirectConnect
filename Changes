@@ -17,3 +17,6 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 	- Fixex a few of the codes in Constants
 	- FedEx Transaction Error was not working properly
 	- checked for (99,"") request terminator when sending a transaction.
+	
+0.05 10/15/2001
+	- Typo in one of the examples

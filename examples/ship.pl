@@ -1,6 +1,6 @@
-use Business::FedEx::Directconnect;
+use Business::FedEx::DirectConnect;
 
-my $t = Business::FedEx::Directconnect->new(uri=>'https://gatewaybeta.fedex.com/GatewayDc'
+my $t = Business::FedEx::DirectConnect->new(uri=>'https://gatewaybeta.fedex.com/GatewayDc'
 				,acc => '' #FedEx account Number
 				,meter => '' #FedEx Meter Number (this is given after you subscribe to FedEx)
 				,referer => 'Vermonster LLC' # Name or company
