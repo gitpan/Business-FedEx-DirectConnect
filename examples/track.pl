@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #$Id: track.pl,v 1.3 2003/02/10 03:10:54 jay.powers Exp $
 use Business::FedEx::DirectConnect;
-
+use strict;
 my $t = new Business::FedEx::DirectConnect(uri=>'https://gatewaybeta.fedex.com/GatewayDC'
 				,acc => '' #FedEx account Number
 				,meter => '' #FedEx Meter Number (this is given after you subscribe to FedEx)
@@ -10,7 +10,7 @@ my $t = new Business::FedEx::DirectConnect(uri=>'https://gatewaybeta.fedex.com/G
 				,Debug=>1
 				);
 
-$t->set_data(5000, 29 =>'836603877972') or die $t->errstr;
+$t->set_data(5000, 29 =>'790713902411') or die $t->errstr;
 
 $t->transaction or die $t->errstr;
 

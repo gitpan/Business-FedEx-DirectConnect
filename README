@@ -1,4 +1,4 @@
-Business/FedEx/DirectConnect version 0.05
+Business/FedEx/DirectConnect version 0.10
 $Id: README,v 1.3 2003/02/09 04:21:48 jay.powers Exp $
 =========================================
 This module is an alternative to using the FedEx Ship Manager API.  

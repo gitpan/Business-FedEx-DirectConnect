@@ -1,5 +1,5 @@
 # FedEx::Constants
-#$Id: Constants.pm,v 1.8 2003/02/23 13:32:25 jay.powers Exp $
+#$Id: Constants.pm,v 1.9 2003/03/16 20:32:51 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 #
@@ -13,14 +13,15 @@ use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
 @EXPORT = qw($FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.09';
+$VERSION = '0.10';
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
 #1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
 #2016 = 021 / 121 FDXE FedEx Express Ship-A-Package
 #2017 = 022 / 122 FDXE Global Rate-A-Package
 #2018 = 019 / 119 FDXE Service Availability
-#3000 = 021 / 121 FDXE FedEx Ground Ship-A-Package
+#2024 = 025 / 125 ALL Rate Available Services
+#3000 = 021 / 121 FDXG FedEx Ground Ship-A-Package
 #3001 = 023 / 123 FDXG FedEx Ground Delete-A-Package
 #3003 = 211 / 311 ALL Subscription
 #3004 = 022 / 122 FDXG Global Rate-A-Package
@@ -32,9 +33,11 @@ our $FE_TT = {
 2016 => ['021','FDXE'],
 2017 => ['022','FDXE'],
 2018 => ['019','FDXE'],
+2024 => ['025',''],
 3000 => ['021','FDXG'],
 3001 => ['023','FDXG'],
 3003 => ['211',''],
+3004 => ['022','FDXG'],
 5000 => ['402',''],
 5001 => ['405','']
 };
@@ -45,6 +48,7 @@ our $FE_RQ = {
 2016 => [0,10,498,3025,5,7,8,9,32,117,183,13,18,50,24,68,23,1273,1401,1333],
 2017 => [0,10,498,3025,8,9,117,16,17,50,75,1274,1401,1333],
 2018 => [0,10,498,3025,47,9,17,50,24],
+2024 => [0,10,498,8,9,117,16,17,50,1401,1333],
 3000 => [0,10,498,3025,5,7,8,9,32,117,183,13,18,50,24,68,23,1273,1401,1333],
 3001 => [0,10,29,498,3025],
 3003 => [0,10,4003,4008,4011,4012,4013,4014,4015],
@@ -113,6 +117,7 @@ our $FE_RE = {
 82 => 'unit_quantity',
 83 => 'export_license_number',
 84 => 'export_license_expiration_date',
+99 => 'end_of_record',
 113 => 'commercial_invoice_flag',
 116 => 'package_total',
 117 => 'sender_country_code',
@@ -194,11 +199,8 @@ our $FE_RE = {
 1137 => 'ursa_uned_prefix',
 1139 => 'sender_irs_ein_number',
 1145 => 'recipient_department',
-1166 => 'deliver_to_cd',
 1167 => 'disp_exception_cd',
 1168 => 'status_exception_cd',
-1169 => 'trackstatus_cd',
-1170 => 'pod_status_cd',
 1174 => 'bso_flag',
 1178 => 'ursa_suffix_code',
 1179 => 'broker_fdx_account_number',
@@ -221,7 +223,6 @@ our $FE_RE = {
 1208 => 'no_indirect_delivery_flag_signature_required',
 1210 => 'purpose_of_shipment',
 1211 => 'pod_address',
-1212 => 'pod_status',
 1213 => 'proactive_notification_flag',
 1237 => 'cod_return_phone',
 1238 => 'cod_return_company',
@@ -260,10 +261,13 @@ our $FE_RE = {
 1342 => 'recipient_pager_number',
 1343 => 'broker_email_address',
 1344 => 'broker_fax_number',
+1346 => 'emerge_shipment_identifier',
+1347 => 'emerge_merchant_identifier';
 1349 => 'aes_filing_status',
 1350 => 'xtn_suffix_number',
 1352 => 'sender_ein_ssn_identificator',
 1358 => 'aes_ftsr_exemption_number',
+1359 => 'sed_legend_number',
 1366 => 'close_manifest_time',
 1367 => 'close_manifest_data_buffer',
 1368 => 'label_type',
@@ -280,6 +284,8 @@ our $FE_RE = {
 1396 => 'sku_item_upc',
 1397 => 'receive_quantity',
 1398 => 'description',
+1399 => 'aes_entry_number',
+1400 => 'total_shipment_weight',
 1401 => 'total_package_weight',
 1402 => 'billed_weight',
 1403 => 'dim_weight',
@@ -347,18 +353,15 @@ our $FE_RE = {
 1559 => 'broker_delivery_notification_flag',
 1560 => 'broker_ship_alert_flag',
 1561 => 'broker_language_code',
-1701 => 'track_status',
-1702 => 'proof_of_delivery_flag',
 1704 => 'service_type_description',
 1705 => 'deliver_to',
 1706 => 'signed_for',
 1707 => 'delivery_time',
-1709 => 'disp_exception',
-1710 => 'cartage_agent',
 1711 => 'status_exception',
 1713 => 'cod_flag',
 1715 => 'number_of_track_activities',
-1718 => 'packaging_alpha_type_description',
+1716 => 'delivery_reattempt_date',
+1717 => 'delivery_reattempt_time',
 1720 => 'delivery_date',
 1721 => 'tracking_activity_line_1',
 1722 => 'tracking_activity_line_2',
@@ -376,6 +379,7 @@ our $FE_RE = {
 1734 => 'tracking_activity_line_14',
 1735 => 'tracking_activity_line_15',
 2254 => 'recipient_fax_number',
+2382 => 'return_shipment_indicator'
 3000 => 'cod_type_collection',
 3001 => 'fedex_ground_purchase_order',
 3002 => 'fedex_ground_invoice',
@@ -390,6 +394,7 @@ our $FE_RE = {
 3023 => 'fedex_home_delivery_date',
 3024 => 'fedex_home_delivery_phone_number',
 3025 => 'carrier_code',
+3035 => 'ship_alert_fax_number',
 3045 => 'cod_return_reference_indicator',
 4003 => 'subscriber_contact_name',
 4004 => 'subscriber_password_reminder',
@@ -420,8 +425,14 @@ Business::FedEx::Constants - FedEx Lookup Codes
 
 =head1 DESCRIPTION
 
-This module holds all the return codes need by FedEx.  All the lookups are done 
-case insesative on these hashes.
+This module contains all the required codes needed by the FedEx Ship Manager API.
+All hash key lookups are done case insesative.  I wanted to follow the 
+FedEx Tagged Transaction Guide as close as possible so some of the names are pretty long.  
+FedEx does occasionally change these tags so please check that you always have the most 
+current version of this module.  Changes should not break existing code.  All changes are 
+documented in a Changes file.
+We use this module extensively so as soon as a change is made we are quick to post to CPAN.  
+Also, any changes or ideas are welcome please email me.
 
 =head1 EXPORT
 
@@ -429,7 +440,7 @@ $FE_RE $FE_SE $FE_TT $FE_RQ
 
 =head1 AUTHORS
 
-Jay Powers, jay@vermonster.com
+Jay Powers, jpowers@cpan.org
 
 L<http://www.vermonster.com/perl>
 
@@ -440,8 +451,7 @@ All rights reserved.
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself
 
-If you have any questions, comments or suggestions please feel free 
-to contact me.
+If you have any questions, comments or suggestions please contact me.
 
 =head1 SEE ALSO
 

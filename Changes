@@ -1,4 +1,4 @@
-#$Id: Changes,v 1.7 2003/02/23 13:32:25 jay.powers Exp $
+#$Id: Changes,v 1.8 2003/03/16 20:32:51 jay.powers Exp $
 Revision history for Perl extension Business::FedEx::DirectConnect.
 
 0.01  Tue Sep  3 10:58:19 2002
@@ -36,3 +36,28 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 
 0.09 02/23/2003
 	- Removed debug syntax
+	
+0.10 03/22/2003
+	- Support for new service 2024 "Rate Availible Services"
+	- Added field 99 "end_of_record" tag
+	- Addedd tags following most current FedEx documentation
+		1346 emerge_shipment_identifier
+		1347 emerge_merchant_identifier
+		1359 sed_legend_number
+		1399 aes_entry_number
+		1400 total_shipment_weight
+		1716 delivery_reattempt_date
+		1717 delivery_reattempt_time
+		2382 return_shipment_indicator
+		3035 ship_alert_fax_number
+		
+	- Removed tags following most current FedEx documentation
+		1166 deliver_to_cd
+		1169 trackstatus_cd
+		1170 pod_status_cd
+		1212 pod_status
+		1701 track_status
+		1702 proof_of_delivery_flag
+		1709 disp_exception
+		1710 cartage_agent
+		1718 packaging_alpha_type_description

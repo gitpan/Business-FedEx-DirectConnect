@@ -1,5 +1,5 @@
 # FedEx::DirectConnect
-#$Id: DirectConnect.pm,v 1.7 2003/02/23 13:32:25 jay.powers Exp $
+#$Id: DirectConnect.pm,v 1.8 2003/03/06 20:54:24 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 # 
@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.09';
+$VERSION = '0.10';
 
 use strict;
 
@@ -45,7 +45,7 @@ sub set_data {
 	$self->{sbuf} .= '10,"' . $self->{acc} . '"' if ($self->{acc});
 	$self->{sbuf} .= '498,"' .$self->{meter}. '"' if ($self->{meter});	
 	foreach (keys %args) {
-		if (/^[0-9-]+$/) { #let users use the hyphenated number fields
+		if (/^[0-9]+\-?\d?$/) { #let users use the hyphenated number fields
 			$self->{sbuf} .= join(',',$_,'"'.$args{$_}.'"');
 		} else {
 			$self->{sbuf} .= join(',',$FE_SE->{lc($_)},'"'.$args{$_}.'"');
@@ -100,7 +100,7 @@ sub transaction {
 
 # Send POST request to FedEx API
 sub _send {	
-	my $self = shift;	
+    my $self = shift;
 	my $ua = LWP::UserAgent->new(timeout => 5);
 	my $len = length($self->{sbuf});
 	print "Sending ". $self->{sbuf} . "\n" if ($self->{Debug});
@@ -108,14 +108,15 @@ sub _send {
 	my $req = HTTP::Request->new(POST => $self->{uri}); # Create a request
 	$req->header('Host' => $self->{host}
 	,'Referer' => $self->{referer}
+	,'User-Agent' => 'Business-FedEx-DirectConnect/'.$VERSION
 	,'Accept' => "image/gif,image/jpeg,image/pjpeg,text/plain,text/html,*/*"
 	,'Content-Type' => "image/gif"
-	,'Content-Length' => $bufferLength);	
+	,'Content-Length' => $bufferLength);
 	$self->{sbuf} .= '99,""' unless ($self->{sbuf} =~ /99,\"\"$/);
 	$req->content($self->{sbuf});
 	print $req->as_string() if ($self->{Debug});
 	# Pass request to the user agent and get a response back
-	my $res = $ua->request($req);	
+	my $res = $ua->request($req);
 	# Check the outcome of the response
 	if ($res->is_success) {
 		$self->{rbuf} = $res->content;
@@ -138,6 +139,7 @@ sub _split_data {
 	foreach (split(/,"/, $self->{rstring})) {
 		/(.*)"([0-9]+\-?\d?)/; # allows for FedEx values with dashes. Added by JTER
 		next unless defined $1;
+		next if ($st_key == 99);
 		$self->{rHash}->{$st_key} = $1;
 		$st_key = $2; #use this as next key
 	}
@@ -174,7 +176,7 @@ sub label {
 sub lookup {
 	my $self = shift;
 	my $code = shift;
-	if ($code =~ m/^[0-9]+$/) {
+	if ($code =~ m/^[0-9]+\-?\d?$/) {
 		print "Looking for " . $code . "\n" if ($self->{Debug});
 		return $self->{rHash}->{$code};
 	} else {
@@ -223,31 +225,31 @@ Business::FedEx::DirectConnect - FedEx Ship Manager Direct Connect
   # The hash values are case insensitive.
   $t->set_data(2016,
   'customer_transaction_identifier' => 'unique1234'
-  'Sender_Company' => 'Vermonster LLC',
-  'Sender_Address_Line_1' => '312 Stuart St',
-  'Sender_City' => 'Boston',
-  'Sender_State' => 'MA',
-  'Sender_Postal_Code' => '02134',
-  'Recipient_Contact_Name' => 'Jay Powers',
-  'Recipient_Address_Line_1' => '44 Main Street',
-  'Recipient_City' => 'Boston',
-  'Recipient_State' => 'MA',
-  'Recipient_Postal_Code' => '02116',
-  'Recipient_Phone_Number' => '6173335555',
-  'Weight_Units' => 'LBS',
-  'Sender_Country_Code' => 'US',
-  'Recipient_Country' => 'US',
-  'Sender_Phone_Number' => '6175556985',
-  'Future_Day_Shipment' => 'Y',
-  'Packaging_Type' => '01',
-  'Service_Type' => '03',
-  'Total_Package_Weight' => '1.0',
-  'Label_Type' => '1',
-  'Label_Printer_Type' => '1',
-  'Label_Media_Type' => '5',
-  'Ship_Date' => '20020828',
-  'Customs_Declared_Value_Currency_Type' => 'USD',
-  'Package_Total' => 1
+  'sender_company' => 'Vermonster LLC',
+  'sender_address_line_1' => '312 stuart st',
+  'sender_city' => 'Boston',
+  'sender_state' => 'MA',
+  'sender_postal_code' => '02134',
+  'recipient_contact_name' => 'Jay Powers',
+  'recipient_addre  _line_1' => '44 main street',
+  'recipient_city' => 'boston',
+  'recipient_state' => 'MA',
+  'recipient_postal_code' => '02116',
+  'recipient_phone_number' => '6173335555',
+  'weight_units' => 'lbs',
+  'sender_country_code' => 'US',
+  'recipient_country' => 'US',
+  'sender_phone_number' => '6175556985',
+  'future_day_shipment' => 'y',
+  'packaging_type' => '01',
+  'service_type' => '03',
+  'total_package_weight' => '1.0',
+  'label_type' => '1',
+  'label_printer_type' => '1',
+  'label_media_type' => '5',
+  'ship_date' => '20020828',
+  'customs_declared_value_currency_type' => 'USD',
+  'package_total' => 1
   ) or die $t->errstr;
   
   $t->transaction() or die $t->errstr;
@@ -259,27 +261,35 @@ Business::FedEx::DirectConnect - FedEx Ship Manager Direct Connect
 
 =head1 DESCRIPTION
 
-This module is an alternative to using the FedEx Ship Manager API.  
+This module provides the necessary requirements to send transactions to FedEx's
+Ship Manager Direct API.  Precautions have been taken to enforce FedEx's API guidelines
+to allow for all transaction types.
+This module is an alternative to using the FedEx Ship Manager API ATOM product.
 Business::FedEx::DirectConnect will provide the necessary communication using LWP and 
 Crypt::SSLeay.
 The main advantage is you will no longer need to install the JRE dependant API 
 provided by FedEx.  Instead, data is POST(ed) directly to the FedEx transaction servers.
-Additionally, Business::FedEx::DirectConnect allows full "non-Win32" functionality.
+
+When using this module please keep in mind FedEx will occasionally change some of the 
+transaction codes for their API.  This should not break existing code, but it is a good idea 
+to check out changes when possible.  I document all the changes in a "Changes" log.
 
 =head1 REQUIREMENTS
 
 In order to submit a transaction to FedEx's Gateway server you must have a valid
-FedEx Account Number, an other unique identifier and a FedEx Meter Number.  To gain access
+FedEx Account Number and a FedEx Meter Number.  To gain access
 and receive a Meter Number you must send a Subscribe request to FedEx containing your FedEx
-account number and contact information.  FedEx has two API servers a live one 
-(https://gateway.fedex.com/GatewayDC) and a beta for testing (https://gatewaybeta.fedex.com/GatewayDC).
+account number and contact information.  There is an example of this request below.
+FedEx has two API servers a live one (https://gateway.fedex.com/GatewayDC) and a 
+beta for testing (https://gatewaybeta.fedex.com/GatewayDC).
 You will need to subscribe to each server you intend to use.  FedEx will also require you
-to send a batch of data to their live server in order to become certified for live labels.
+to send a batch of defined data to their live server in order to become certified for live 
+label creation.  
 This module uses LWP to POST request information so it is a requirement to have LWP installed.  
 Also, you will need SSL encryption to access https URIs.  I recommend installing Crypt::SSLeay 
 Please refer to the FedEx documentation at http://www.fedex.com/globaldeveloper/shipapi/
 Here you will find more information about using the FedEx API.  You will need to know
-what UTI to use to send a request.
+what UTI is needed to send your request.
 
 Here is a sample Subscription Transaction
 
@@ -295,7 +305,8 @@ Here is a sample Subscription Transaction
 	) or die $t->errstr;
 
 
-This call will return a FedEx Meter number so you can use the FedEx API.
+This call will return a FedEx Meter number so you can use the FedEx API.  The meter number
+will be referenced in field 498.  $t->lookup(498);
 
 =head1 FedEx UTI
 
@@ -320,6 +331,7 @@ uti  = request / reply Carrier Description
 	2016 = 021 / 121 FDXE FedEx Express Ship-A-Package
 	2017 = 022 / 122 FDXE Global Rate-A-Package
 	2018 = 019 / 119 FDXE Service Availability
+	2024 = 025 / 125 ALL Rate Available Services
 	3000 = 021 / 121 FDXE FedEx Ground Ship-A-Package
 	3001 = 023 / 123 FDXG FedEx Ground Delete-A-Package
 	3003 = 211 / 311 ALL Subscription
@@ -339,14 +351,14 @@ The methods described in this section are available for all C<FedEx::DirectConne
 This method will accept a valid FedEx UTI number and a hash of values.  The first
 arg must be a valid UTI. Using these values set_data will construct and return a 
 valid FedEx request string.
-Assuming you pass in a valid FedEx UTI this method will find the correct
+Assuming you pass a valid FedEx UTI this method will find the correct
 Transaction Number for you.  You need not pass this in.  Also no need to pass in your
 FedEx Account Number or Meter Number.  You should pass these when creating a new 
 Business::FedEx::DirectConnect object.
 This method will allow you to use either the number field provided in the FedEx 
-documentation or the hash (case insensitive) $FE_RE found in FedEx::Constants.
+documentation or the hash (case insensitive) $FE_RE found in Business::FedEx::Constants.
 
-Here is a tracking example where 29 is "tracking number" field FedEx has
+Here is a tracking example where 29 is the "tracking number" field FedEx has
 provided.
 
 	$t->set_data(5000, 'tracking_number'=>'836603877972') or die $t->errstr;
@@ -361,17 +373,18 @@ Method to return the required fields for a given FedEx UTI.
 
 =item $t->transaction()
 
-Send transaction to FedEx.  Returns the full reply from FedEx.
+Send transaction to FedEx. Optionally you can pass the full request string if you choose not to use
+the set_data method.  Returns the full reply from FedEx.
 
 =item $t->label('someLabel.png')
 
-This method will decode the binary image data from FedEx.  If nothing
-is passed in the binary data string will be returned.
+This method will decode the binary image data from FedEx and save it to a file.  
+If nothing is passed the binary data string will be returned.
 
 =item $t->lookup('tracking_number')
 
 This method will return the value for an item returned from FedEx.  Refer to
-the C<FedEx::Constants> $FE_RE hash to see all possible values. 
+the C<Business::FedEx::Constants> $FE_RE hash to see all possible values. 
 
 =item $t->rbuf()
 
@@ -389,9 +402,19 @@ Returns a hash of the FedEx reply values
 
 =back
 
+=head1 IDEAS/TODO
+
+Build methods for each type of transaction so you don't need to 
+know UTIs and other FedEx codes.
+FedEx Express Ship-A-Package UTI 2016 would be called via
+$object->FDXE_ship();
+
+Build for multiple request.  FedEx currently can only accept
+one transaction per request. I might try something with LWP::Parallel::UserAgent.
+
 =head1 AUTHOR
 
-Jay Powers, <F<jay@vermonster.com>>
+Jay Powers, <F<jpowers@cpan.org>>
 
 L<http://www.vermonster.com/perl>
 
