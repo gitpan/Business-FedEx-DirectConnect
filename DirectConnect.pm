@@ -1,5 +1,5 @@
 # FedEx::DirectConnect
-#$Id: DirectConnect.pm,v 1.5 2003/02/09 04:07:44 jay.powers Exp $
+#$Id: DirectConnect.pm,v 1.6 2003/02/10 03:10:46 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 # 
@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.07';
+$VERSION = '0.08';
 
 use strict;
 
@@ -30,43 +30,6 @@ sub new {
 				,@_ };
 	bless ($self, $class);
 }
-# Send a call to FedEx
-sub transaction {
-	my $self = shift;
-	if (@_) {
-		$self->{sbuf} = shift;
-	}
-	if ($self->{UTI} eq '') { # Find the UTI
-		my $tmp = $self->{sbuf};
-		$tmp =~ s/0,"([0-9]*).*"/$1/;
-		for my $utis (keys %$FE_TT) {
-			 for (@{%$FE_TT->{$utis}}) {
-				$self->{UTI} = $utis if ($_ eq $tmp);
-			 }
-		}
-	}
-	if (!$self->{sbuf}) {		
-		$self->errstr("Error: You must provide data to send to FedEx.");
-		return 0;
-	}
-	if (!$self->{acc}) {
-		$self->errstr("Error: You must provide a valid FedEx account number.");
-		return 0;
-	}
-	if (!$self->{acc}) {
-			$self->errstr("Error: You must provide a valid FedEx metter number.");
-			return 0;
-	}
-	$self->_send();	# send POST to FedEx
-	$self->{rbuf} =~ s/\s+$//g; # get rid of the extra spaces
-	$self->_split_data();
-	# Check for Errors from FedEx
-	if ($self->{rHash}->{2}) {
-		$self->errstr("FedEx Transaction Error: " . $self->{rHash}->{3});
-		return 0;
-	}
-	return 1;
-}
 
 sub set_data {
 	my $self = shift;
@@ -74,7 +37,7 @@ sub set_data {
 	my %args = @_;
 	if (!$self->{UTI}) {		
 		$self->errstr("Error: You must provide a valid UTI.");
-		return 0;
+		return undef;
 	}
 	$self->{sbuf} = '';
 	$self->{sbuf} .= '0,"' . $FE_TT->{$self->{UTI}}[0] . '"' if ($FE_TT->{$self->{UTI}}[0]);
@@ -92,30 +55,53 @@ sub set_data {
 	return $self->{sbuf};
 }
 
-# here are some functions to deal with data from FedEx
-sub _split_data {
+# Send a call to FedEx
+sub transaction {
 	my $self = shift;
-	my $count=0;
-	my @field_data;
-	($self->{rstring}, $self->{rbinary}) = split("188,\"", $self->{rbuf});
-	$self->{rstring} =~ s/\s{2,}/ /g; # get rid of any extra spaces
-	# Thank PTULLY for this.
-	my @fedex_response = split(//, $self->{rstring});
-	foreach(@fedex_response){
-	   $field_data[$count] = $field_data[$count].$_;
-	   if($field_data[$count] =~ /\d+\-?\d?,\".*\"$/){ # allows for FedEx values with dashes. Added by JTER
-			$count++;
-	 }
+	if (@_) {
+		$self->{sbuf} = shift;
 	}
-	print "Return String " . $self->{rstring} . "\n" if ($self->{Debug});
-	foreach (@field_data) 
-	{
-		/([0-9]+\-?\d?),\"(.*)\"/; # allows for FedEx values with dashes.  Added by JTER 
-		#print $1 ." = " . $2 . "\n";
-		$self->{rHash}->{$1} = $2 if defined($1);
+	if (! exists $self->{UTI}) { # Find the UTI
+		my $tmp = $self->{sbuf};
+		$tmp =~ s/0,"([0-9]*).*"/$1/;
+		for my $utis (keys %{$FE_TT}) {
+			 for (@{$FE_TT->{$utis}}) {
+				$self->{UTI} = $utis if ($_ eq $tmp);
+			 }
+		}
 	}
+	if (!$self->{sbuf}) {		
+		$self->errstr("Error: You must provide data to send to FedEx.");
+		return undef;
+	}
+	if (!$self->{acc}) {
+		$self->errstr("Error: You must provide a valid FedEx account number.");
+		return undef;
+	}
+	if (!$self->{meter}) {
+		$self->errstr("Error: You must provide a valid FedEx meter number.");
+		return undef;
+	}
+	
+	if ($self->_send())	{ # send POST to FedEx	
+		$self->{rbuf} =~ s/\s+$//g if ($self->{rbuf} =~ /\s+$/); # get rid of the extra spaces
+		$self->_split_data();
+		use Data::Dumper;
+		print Dumper($self->{rHash});
+		die;
+		# Check for Errors from FedEx
+		if (exists $self->{rHash}->{2}) {
+			$self->errstr("FedEx Transaction Error: " . $self->{rHash}->{3});
+			return undef;
+		}
+	} else {
+		return undef;
+	}
+	return 1;
 }
 
+
+# Send POST request to FedEx API
 sub _send {	
 	my $self = shift;	
 	my $ua = LWP::UserAgent->new(timeout => 5);
@@ -136,9 +122,27 @@ sub _send {
 	# Check the outcome of the response
 	if ($res->is_success) {
 		$self->{rbuf} = $res->content;
+		return 1;
 	} else {
 		$self->errstr("Request Error: " . $res->status_line);
-		return 0;
+		return undef;
+	}
+}
+
+# here are some functions to deal with data from FedEx
+sub _split_data {
+	my $self = shift;
+	my $count=0;
+	my @field_data;
+	($self->{rstring}, $self->{rbinary}) = split("188,\"", $self->{rbuf});
+	$self->{rstring} =~ s/\s{2,}/ /g; # get rid of any extra spaces
+	print "Return String " . $self->{rstring} . "\n" if ($self->{Debug});
+	my $st_key = 0;	# start the first key at 0
+	foreach (split(/,"/, $self->{rstring})) {
+		/(.*)"([0-9]+\-?\d?)/; # allows for FedEx values with dashes. Added by JTER
+		next unless defined $1;
+		$self->{rHash}->{$st_key} = $1;
+		$st_key = $2; #use this as next key
 	}
 }
 
@@ -148,7 +152,7 @@ sub required {
 	my $self = shift;
 	my $uti = shift;
 	my @req;
-	foreach (@{%$FE_RQ->{$uti}}) {
+	foreach (@{$FE_RQ->{$uti}}) {
 		push @req, $FE_RE->{$_};
 	}
 	return @req;
@@ -156,11 +160,11 @@ sub required {
 # print or create a label
 sub label {
 	my $self = shift;
-	$self->{rbinary} =~ s/"99.*$// if ($self->{rbinary});
+	$self->{rbinary} =~ s/"99.*$// if ($self->{rbinary}); #" Comment for color
 	$self->{rbinary} =~ s/\%([0-9][0-9])/chr(hex("0x$1"))/eg if ($self->{rbinary});	
 	if (@_) {
 		my $file = shift;
-		open(FILE, ">$file") or  die "Could not open $file:\n$!";
+		open(FILE, ">$file") or die "Could not open $file:\n$!";
 		binmode(FILE);
 		print FILE $self->{rbinary};
 		close(FILE);
@@ -409,10 +413,3 @@ to contact me.
 C<Business::FedEx::Constants>
 
 =cut
-
-
-
-
-Thanks,
-Jay Powers
-http://www.vermonster.com 

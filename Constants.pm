@@ -1,5 +1,5 @@
 # FedEx::Constants
-#$Id: Constants.pm,v 1.5 2003/02/09 03:41:59 jay.powers Exp $
+#$Id: Constants.pm,v 1.6 2003/02/10 03:10:46 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 #
@@ -13,7 +13,7 @@ use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
 @EXPORT = qw($FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.07';
+$VERSION = '0.08';
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
 #1005 = 023 / 123 FDXE FedEx Express Delete-A-Package

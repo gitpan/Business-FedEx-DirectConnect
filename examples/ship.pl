@@ -1,13 +1,14 @@
 #!/usr/bin/perl -w
-#$Id: ship.pl,v 1.3 2003/02/09 03:39:21 jay.powers Exp $
+#$Id: ship.pl,v 1.4 2003/02/10 03:10:54 jay.powers Exp $
 use strict;
 use Business::FedEx::DirectConnect;
 
-my $t = Business::FedEx::DirectConnect->new(uri=>'https://gatewaybeta.fedex.com/GatewayDc'
+my $t = new Business::FedEx::DirectConnect(uri=>'https://gatewaybeta.fedex.com/GatewayDC'
 				,acc => '' #FedEx account Number
 				,meter => '' #FedEx Meter Number (this is given after you subscribe to FedEx)
 				,referer => 'Vermonster LLC' # Name or company
 				,host=> 'gatewaybeta.fedex.com' #Host
+				,Debug=>1
 				);
 
 # 2016 is the UTI for FedEx.  If you don't know what this is
@@ -18,7 +19,7 @@ $t->set_data(2016,
 'sender_company' => 'Vermonster LLC',
 'sender_address_line_1' => '312 stuart st',
 'sender_city' => 'Boston',
-'sender_state' => 'Ma',
+'sender_state' => 'MA',
 'sender_postal_code' => '02134',
 'recipient_contact_Name' => 'Jay Powers',
 'recipient_address_line_1' => '44 Main street',
@@ -37,12 +38,11 @@ $t->set_data(2016,
 'label_type' => '1',
 'label_printer_type' => '1',
 'label_media_type' => '5',
-'ship_date' => '20020828',
+'ship_date' => '20030111',
 'customs_declared_value_currency_type' => 'USD',
 'package_total' => 1
 ) or die $t->errstr;
 
-$t->transaction() or die $t->errstr;
+$t->transaction or die $t->errstr;
 
 $t->label("mylabel.png");
-
