@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.01'; # $Id: DirectConnect.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
+$VERSION = '0.02'; # $Id: DirectConnect.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
 
 use strict;
 
@@ -111,7 +111,7 @@ sub set_data {
 # here are some functions to deal with data from FedEx
 sub _split_data {
 	my $self = shift;
-	my $count;
+	my $count=0;
 	my @field_data;
 	($self->{rstring}, $self->{rbinary}) = split("188,\"", $self->{rbuf});
 	$self->{rstring} =~ s/\s{2,}/ /g; # get rid of any extra spaces
@@ -192,7 +192,7 @@ __END__
 
 =head1 NAME
 
-Fedex::DirectConnect - FedEx Ship Manager Direct Connect
+Business::Fedex::DirectConnect - FedEx Ship Manager Direct Connect
 
 =head1 SYNOPSIS
 
@@ -205,7 +205,7 @@ Fedex::DirectConnect - FedEx Ship Manager Direct Connect
   				,host=> 'gatewaybeta.fedex.com' #Host
   				);
   
-  # 2016 is the UTI for FedEx.  I you don't know what this is
+  # 2016 is the UTI for FedEx.  If you don't know what this is
   # you need to read the FedEx Documentation.
   # http://www.fedex.com/globaldeveloper/shipapi/
   $t->set_data(2016,
@@ -282,7 +282,7 @@ Here is a sample Subscription Transaction
 
 This call will return a FedEx Meter number so you can use the test server.
 
-=head FedEx UTI
+=head1 FedEx UTI
 
 Sited from FedEx Documentation.  See http://www.fedex.com/globaldeveloper/shipapi/
 for more information.
@@ -300,17 +300,17 @@ Valid UTIs are listed below:
 
 uti  = request / reply Carrier Description 
 
-1002 = 007 / 107 FDXG End-of-day close
-1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
-2016 = 021 / 121 FDXE FedEx Express Ship-A-Package
-2017 = 022 / 122 FDXE Global Rate-A-Package
-2018 = 019 / 119 FDXE Service Availability
-3000 = 021 / 121 FDXG FedEx Ground Ship-A-Package
-3001 = 023 / 123 FDXG FedEx Ground Delete-A-Package
-3003 = 211 / 311 ALL Subscription
-3004 = 022 / 122 FDXG Global Rate-A-Package
-5000 = 402 / 502 ALL Track By Number, Destination, Ship Date, and Reference
-5001 = 405 / 505 ALL Signature Proof of Delivery
+	1002 = 007 / 107 FDXG End-of-day close
+	1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
+	2016 = 021 / 121 FDXE FedEx Express Ship-A-Package
+	2017 = 022 / 122 FDXE Global Rate-A-Package
+	2018 = 019 / 119 FDXE Service Availability
+	3000 = 021 / 121 FDXG FedEx Ground Ship-A-Package
+	3001 = 023 / 123 FDXG FedEx Ground Delete-A-Package
+	3003 = 211 / 311 ALL Subscription
+	3004 = 022 / 122 FDXG Global Rate-A-Package
+	5000 = 402 / 502 ALL Track By Number, Destination, Ship Date, and Reference
+	5001 = 405 / 505 ALL Signature Proof of Delivery
 
 
 =head1 COMMON METHODS
@@ -334,11 +334,11 @@ documentation or the hash $FE_RE found in FedEx::Constants.
 Here is a tracking example where 29 is "tracking number" field FedEx has
 provided.
 
-$t->set_data(5000, 'tracking_number'=>'836603877972') or die $t->errstr;
+	$t->set_data(5000, 'tracking_number'=>'836603877972') or die $t->errstr;
 
 is the same as
 
-$t->set_data(5000, 29 =>'836603877972') or die $t->errstr;
+	$t->set_data(5000, 29 =>'836603877972') or die $t->errstr;
 
 =item $t->required(UTI)
 
@@ -386,6 +386,9 @@ All rights reserved.
 
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself
+
+If you have any questions, comments or suggestions please feel free 
+to contact me.
 
 =head1 SEE ALSO
 

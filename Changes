@@ -4,3 +4,6 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 	- original version; created by h2xs 1.21 with options
 		-X -n Business::FedEx::DirectConnect
 
+0.02 09/05/2002
+	- Fixed a few syntax errors in Constants
+	- Also an error in the POD

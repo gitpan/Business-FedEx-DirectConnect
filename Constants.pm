@@ -13,7 +13,7 @@ use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
 @EXPORT = qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.01'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
+$VERSION = '0.02'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
 
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
@@ -78,13 +78,13 @@ our $FE_ER = {
 -2223 => 'API_ATOM_ADMIN_PORT_TOO_LOW',# An attempt was made to set Atom’s Admin port to a value less than 0.
 -2224 => 'API_UNABLE_TO_DESTROY_SOCKET',# Unable to destroy socket handle.
 -2256 => 'API_NOT_INSTALLED',# API is not installed.
--3000 => 'GATEWAY_DOWN' #The FedEx Gateway is down. Try again later.
--3001 => 'GATEWAY_COMM_ERROR' #The FedEx Gateway tried to communicate with a server which is down or the transaction contained no data.
--3002 => 'GATEWAY_VALIDATION_ERROR' #The FedEx Gateway could not validate this transaction.
--3003 => 'GATEWAY_XCTN_NOT_RECOGNIZED' #The FedEx Gateway received an invalid transaction.
--3004 => 'GATEWAY_ACCESS_DENIED' #The FedEx Gateway denied access for this transaction.
--3005 => 'GATEWAY_USERID_NOT_FOUND' #The FedEx Gateway could not validate the user id for this transaction.
--3006 => 'GATEWAY_DATA_FORMAT_ERROR' #The transaction format is invalid.
+-3000 => 'GATEWAY_DOWN', #The FedEx Gateway is down. Try again later.
+-3001 => 'GATEWAY_COMM_ERROR', #The FedEx Gateway tried to communicate with a server which is down or the transaction contained no data.
+-3002 => 'GATEWAY_VALIDATION_ERROR', #The FedEx Gateway could not validate this transaction.
+-3003 => 'GATEWAY_XCTN_NOT_RECOGNIZED', #The FedEx Gateway received an invalid transaction.
+-3004 => 'GATEWAY_ACCESS_DENIED', #The FedEx Gateway denied access for this transaction.
+-3005 => 'GATEWAY_USERID_NOT_FOUND', #The FedEx Gateway could not validate the user id for this transaction.
+-3006 => 'GATEWAY_DATA_FORMAT_ERROR', #The transaction format is invalid.
 -3007 => 'GATEWAY_UNKNOWN_ROUTE_ID' #The Universal Transaction Identifier (Route ID) was unknown to the FedEx Gateway.
 };
 
@@ -201,7 +201,7 @@ our $FE_RE = {
 606 => 'int-con_address_line_2',
 607 => 'int-con_city',
 608 => 'int-con_state',
-609 => 'int',
+609 => 'int-con_zip',
 610 => 'int-con_phone_number',
 611 => 'int-con_country',
 1005 => 'manifest_invoic_e_file_name',
@@ -250,7 +250,7 @@ our $FE_RE = {
 1193 => 'ship_delete_message',
 1195 => 'payer_country_code',
 1200 => 'hold_at_location_hal_flag',
-1201 => 'sender’s_email_address',
+1201 => 'senders_email_address',
 1202 => 'recipient’s_email_address',
 1203 => 'optional_ship_alert_message',
 1204 => 'ship_alert_email_address',
@@ -314,7 +314,7 @@ our $FE_RE = {
 1392 => 'inbound_visibility_block_shipment_data_indicator',
 1394 => 'shipment_content_records_total',
 1395 => 'part_number',
-1396 => 'sku_item_upc#',
+1396 => 'sku_item_upc',
 1397 => 'receive_quantity',
 1398 => 'description',
 1401 => 'total_package_weight',
@@ -439,7 +439,7 @@ Business::Fedex::Constants - FedEx Lookup Codes
 
 =head1 DESCRIPTION
 
-This module holds all the variables need by FedEx.
+This module holds all the return codes need by FedEx.
 
 =head1 EXPORT
 
@@ -448,6 +448,18 @@ $FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ
 =head1 AUTHORS
 
 Jay Powers, jay@vermonster.com
+
+L<http://www.vermonster.com/perl>
+
+Copyright (c) 2002 Jay Powers
+
+All rights reserved.
+
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself
+
+If you have any questions, comments or suggestions please feel free 
+to contact me.
 
 =head1 SEE ALSO
 
