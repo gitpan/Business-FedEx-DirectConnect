@@ -13,20 +13,19 @@ use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
 @EXPORT = qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.02'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
-
+$VERSION = '0.03'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
 #1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
 #2016 = 021 / 121 FDXE FedEx Express Ship-A-Package
 #2017 = 022 / 122 FDXE Global Rate-A-Package
 #2018 = 019 / 119 FDXE Service Availability
-#3000 = 021 / 121 FDXG FedEx Ground Ship-A-Package
+#3000 = 021 / 121 FDXE FedEx Ground Ship-A-Package
 #3001 = 023 / 123 FDXG FedEx Ground Delete-A-Package
 #3003 = 211 / 311 ALL Subscription
 #3004 = 022 / 122 FDXG Global Rate-A-Package
 #5000 = 402 / 502 ALL Track By Number, Destination, Ship Date, and Reference
-#5001 = 405/505 ALL Signature Proof of Delivery
+#5001 = 405 / 505 ALL Signature Proof of Delivery
 our $FE_TT = {
 1002 => ['007','FDXG'],
 1005 => ['023','FDXE'],
@@ -439,7 +438,8 @@ Business::Fedex::Constants - FedEx Lookup Codes
 
 =head1 DESCRIPTION
 
-This module holds all the return codes need by FedEx.
+This module holds all the return codes need by FedEx.  All the lookups are done 
+case insesative on these hashes.
 
 =head1 EXPORT
 

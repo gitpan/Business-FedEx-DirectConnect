@@ -7,3 +7,8 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 0.02 09/05/2002
 	- Fixed a few syntax errors in Constants
 	- Also an error in the POD
+	
+0.03 09/16/2002
+	- Regex bug on line 101. Thanks Wayne
+	- added a little more documentation
+	- UTI 3000 changed to FDXE

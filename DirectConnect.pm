@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.02'; # $Id: DirectConnect.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
+$VERSION = '0.03'; # $Id: DirectConnect.pm,v 1.1.1.1 2002/09/10 13:14:10 jay.powers Exp 
 
 use strict;
 
@@ -98,7 +98,7 @@ sub set_data {
 	$self->{sbuf} .= '498,"' .$self->{meter}. '"' if ($self->{meter});	
 	foreach (keys %args) {
 		#print $FE_SE->{lc($_)}. "\n";
-		if (/[0-9]+/) { #let users use the number fields
+		if (/^[0-9]+$/) { #let users use the number fields
 			$self->{sbuf} .= join(',',$_,'"'.$args{$_}.'"');
 		} else {
 			$self->{sbuf} .= join(',',$FE_SE->{lc($_)},'"'.$args{$_}.'"');
@@ -162,7 +162,7 @@ sub label {
 sub lookup {
 	my $self = shift;
 	my $code = shift;
-	if ($code =~ m/[0-9]+/) {
+	if ($code =~ m/^[0-9]+$/) {
 		print "Looking for " . $code if ($self->{Debug});
 		return $self->{rHash}->{$code};
 	} else {
@@ -199,8 +199,8 @@ Business::Fedex::DirectConnect - FedEx Ship Manager Direct Connect
   use Business::FedEx::DirectConnect;
   
   my $t = Business::FedEx::DirectConnect->new(uri=>'https://gatewaybeta.fedex.com/GatewayDC'
-  				,acc => '#########' #FedEx Account Number
-  				,meter => '#######' #FedEx Meter Number (This is given after you subscribe to FedEx)
+  				,acc => '' #FedEx Account Number
+  				,meter => '' #FedEx Meter Number (This is given after you subscribe to FedEx)
   				,referer => 'Vermonster' # Name or Company
   				,host=> 'gatewaybeta.fedex.com' #Host
   				);
@@ -208,6 +208,7 @@ Business::Fedex::DirectConnect - FedEx Ship Manager Direct Connect
   # 2016 is the UTI for FedEx.  If you don't know what this is
   # you need to read the FedEx Documentation.
   # http://www.fedex.com/globaldeveloper/shipapi/
+  # The hash values are case insensitive.
   $t->set_data(2016,
   'customer_transaction_identifier' => 'unique1234'
   'Sender_Company' => 'Vermonster LLC',
@@ -305,7 +306,7 @@ uti  = request / reply Carrier Description
 	2016 = 021 / 121 FDXE FedEx Express Ship-A-Package
 	2017 = 022 / 122 FDXE Global Rate-A-Package
 	2018 = 019 / 119 FDXE Service Availability
-	3000 = 021 / 121 FDXG FedEx Ground Ship-A-Package
+	3000 = 021 / 121 FDXE FedEx Ground Ship-A-Package
 	3001 = 023 / 123 FDXG FedEx Ground Delete-A-Package
 	3003 = 211 / 311 ALL Subscription
 	3004 = 022 / 122 FDXG Global Rate-A-Package
@@ -315,7 +316,7 @@ uti  = request / reply Carrier Description
 
 =head1 COMMON METHODS
 
-The methods described in this section are available for all C<FedEx> objects.
+The methods described in this section are available for all C<FedEx::DirectConnect> objects.
 
 =over 4
 
@@ -329,7 +330,7 @@ Transaction Number for you.  You need not pass this in.  Also no need to pass in
 FedEx Account Number or Meter Number.  You should pass these when creating a new 
 Business::FedEx::DirectConnect object.
 This method will allow you to use either the number field provided in the FedEx 
-documentation or the hash $FE_RE found in FedEx::Constants.
+documentation or the hash (case insensitive) $FE_RE found in FedEx::Constants.
 
 Here is a tracking example where 29 is "tracking number" field FedEx has
 provided.
@@ -356,7 +357,7 @@ is passed in the binary data string will be returned.
 =item $t->lookup('tracking_number')
 
 This method will return the value for an item returned from FedEx.  Refer to
-the C<FedEx::Constant> $FE_RE hash to see all possible values. 
+the C<FedEx::Constants> $FE_RE hash to see all possible values. 
 
 =item $t->rbuf()
 

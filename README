@@ -1,4 +1,4 @@
-Business/FedEx/DirectConnect version 0.02
+Business/FedEx/DirectConnect version 0.03
 =========================================
 This module is an alternative to using the FedEx Ship Manager API.  
 Business::FedEx::DirectConnect will provide the necessary communication using LWP and 
@@ -19,6 +19,7 @@ To install this module type the following:
    make test
    make install
 
+If your on Win32 you should use nmake
 
 COPYRIGHT AND LICENCE
 

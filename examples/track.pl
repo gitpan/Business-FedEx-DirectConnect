@@ -1,8 +1,8 @@
 use Business::FedEx::DirectConnect;
 
 my $t = Business::FedEx::DirectConnect->new(uri=>'https://gatewaybeta.fedex.com/GatewayDC'
-	,acc => '#########' #FedEx Account Number
-	,meter => '#######' #FedEx Meter Number (This is given after you subscribe to FedEx)
+	,acc => '' #FedEx Account Number
+	,meter => '' #FedEx Meter Number (This is given after you subscribe to FedEx)
 	,referer => 'Vermonster LLC' # Name or Company
 	,host=> 'gatewaybeta.fedex.com' #Host
 	);
