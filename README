@@ -1,5 +1,5 @@
-Business/FedEx/DirectConnect version 0.15
-$Id: README,v 1.5 2003/06/06 22:27:47 jay.powers Exp $
+Business/FedEx/DirectConnect version 0.16
+$Id: README,v 1.7 2003/06/18 17:09:20 jay.powers Exp $
 =========================================
 This module is an alternative to using the FedEx Ship Manager API.  
 Business::FedEx::DirectConnect will provide the necessary communication using LWP and 
