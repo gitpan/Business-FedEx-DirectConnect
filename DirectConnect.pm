@@ -1,8 +1,8 @@
 # FedEx::DirectConnect
-#$Id: DirectConnect.pm,v 1.15 2003/06/20 00:29:36 jay.powers Exp $
+#$Id: DirectConnect.pm,v 1.20 2003/08/18 01:11:09 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
-# 
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself
 
@@ -11,16 +11,16 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.17';
+$VERSION = '0.18';
 
 use strict;
 
 use vars qw($VERSION);
 
 sub new {
-	my $name = shift;	
+	my $name = shift;
 	my $class = ref($name) || $name;
-	my $self  = { 
+	my $self  = {
 				 uri=>'https://gatewaybeta.fedex.com/GatewayDC'
 				,acc => ''
 				,meter => ''
@@ -37,7 +37,7 @@ sub set_data {
 	my %args = @_;
 	if (!$self->{UTI}) {
 		$self->errstr("Error: You must provide a valid UTI.");
-		return undef;
+		return 0;
 	}
 	$self->{sbuf} = '';
 	$self->{sbuf} .= '0,"' . $FE_TT->{$self->{UTI}}[0] . '"' if ($FE_TT->{$self->{UTI}}[0]);
@@ -57,7 +57,8 @@ sub set_data {
 
 # Send a call to FedEx
 sub transaction {
-	my $self = shift;
+	
+    my $self = shift;
 	if (@_) {
 		$self->{sbuf} = shift;
 	}
@@ -72,7 +73,7 @@ sub transaction {
 	}
 	if (!$self->{sbuf}) {
 		$self->errstr("Error: You must provide data to send to FedEx.");
-		return undef;
+		return 0;
 	}
 
 	if ($self->_send())	{ # send POST to FedEx
@@ -81,18 +82,18 @@ sub transaction {
 		# Check for Errors from FedEx
 		if (exists $self->{rHash}->{2}) {
 			$self->errstr("FedEx Transaction Error: " . $self->{rHash}->{3});
-			return undef;
+			return 0;
 		}
-                return 1;
+        return 1;
 	} else {
-	        return undef;
+	    return 0;
 	}
 }
 
 
 # Send POST request to FedEx API
-sub _send {	
-        my $self = shift;
+sub _send {
+    my $self = shift;
 	my $ua = LWP::UserAgent->new(timeout => 10);
 	my $len = length($self->{sbuf});
 	print "Sending ". $self->{sbuf} . "\n" if ($self->{Debug});
@@ -115,22 +116,22 @@ sub _send {
 		return 1;
 	} else {
 		$self->errstr("Request Error: " . $res->status_line);
-		return undef;
+		return 0;
 	}
 }
 
 # here are some functions to deal with data from FedEx
 sub _split_data {
 	my $self = shift;
-	my $count=0;
+	my $count = 0;
 	my @field_data;
 	($self->{rstring}, $self->{rbinary}) = split("188,\"", $self->{rbuf});
 	print "Return String " . $self->{rstring} . "\n" if ($self->{Debug});
 	my $st_key = 0;	# start the first key at 0
 	foreach (split(/,"/, $self->{rstring})) {
-		/(.*)"([0-9]+\-?\d?)/s; # allows for FedEx values with dashes. Added by JTER
+		/(.*)"([\d+\-?]+)/s;
 		next unless defined $1;
-		next if ($st_key == 99);
+		next if ($st_key =~ m/^99$/);
 		$self->{rHash}->{$st_key} = $1;
 		$st_key = $2; #use this as next key
 	}
@@ -151,7 +152,7 @@ sub required {
 sub label {
 	my $self = shift;
 	$self->{rbinary} =~ s/"99.*$// if ($self->{rbinary}); #" Comment for color
-	$self->{rbinary} =~ s/\%([0-9][0-9])/chr(hex("0x$1"))/eg if ($self->{rbinary});	
+	$self->{rbinary} =~ s/\%([0-9][0-9])/chr(hex("0x$1"))/eg if ($self->{rbinary});
 	if (@_) {
 		my $file = shift;
 		open(FILE, ">$file") or die "Could not open $file:\n$!";
@@ -187,7 +188,7 @@ sub hash_ret {
 	return $self->{rHash};
 }
 
-sub errstr { 
+sub errstr {
 	my $self = shift;
 	$self->{errstr} = shift if @_;
 	return $self->{errstr};
@@ -242,7 +243,7 @@ Business::FedEx::DirectConnect - FedEx Ship Manager Direct Connect
 
         $t->transaction() or die $t->errstr;
 
-        print $t->lookup('tracking_number');
+        print "Tracking# ". $t->lookup('tracking_number');
 
         $t->label("myLabel.png");
 
@@ -258,8 +259,8 @@ Crypt::SSLeay.
 The main advantage is you will no longer need to install the JRE dependant API
 provided by FedEx.  Instead, data is POST(ed) directly to the FedEx transaction servers.
 
-When using this module please keep in mind FedEx will occasionally change some of the 
-transaction codes for their API.  This should not break existing code, but it is a good idea 
+When using this module please keep in mind FedEx will occasionally change some of the
+transaction codes for their API.  This should not break existing code, but it is a good idea
 to check out changes when possible.  I document all the changes in a "Changes" log.
 
 =head1 REQUIREMENTS
@@ -268,13 +269,13 @@ To submit a transaction to FedEx's Gateway server you must have a valid
 FedEx Account Number and a FedEx Meter Number.  To gain access
 and receive a Meter Number you must send a Subscribe () request to FedEx containing your FedEx
 account number and contact information.  There is an example of this request below.
-FedEx has two API servers a live one (https://gateway.fedex.com/GatewayDC) and a 
+FedEx has two API servers a live one (https://gateway.fedex.com/GatewayDC) and a
 beta for testing (https://gatewaybeta.fedex.com/GatewayDC).
 You will need to subscribe to each server you intend to use.  FedEx will also require you
-to send a batch of defined data to their live server in order to become certified for live 
-label creation.  
-This module uses LWP to POST request information so it is a requirement to have LWP installed.  
-Also, you will need SSL encryption to access https URIs.  I recommend installing Crypt::SSLeay 
+to send a batch of defined data to their live server in order to become certified for live
+label creation.
+This module uses LWP to POST request information so it is a requirement to have LWP installed.
+Also, you will need SSL encryption to access https URIs.  I recommend installing Crypt::SSLeay
 Please refer to the FedEx documentation at http://www.fedex.com/globaldeveloper/shipapi/
 Here you will find more information about using the FedEx API.  You will need to know
 what UTI is needed to send your request.

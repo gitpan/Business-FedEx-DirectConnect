@@ -1,4 +1,4 @@
-#$Id: Changes,v 1.13 2003/06/20 00:29:36 jay.powers Exp $
+#$Id: Changes,v 1.15 2003/08/13 21:38:54 jay.powers Exp $
 Revision history for Perl extension Business::FedEx::DirectConnect.
 
 0.01  Tue Sept  3 10:58:19 2002
@@ -123,4 +123,8 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 0.17 06/18/03
         - Removed the Account#, Meter# requirements in &transaction
         - Wrong hash lookup for values with -'s in set_data line 49
-        
+
+0.18 08/13/03
+        - Line 133 warning for non numeric values
+        - Line 132 new regex for double hyphens (#-#-#)
+

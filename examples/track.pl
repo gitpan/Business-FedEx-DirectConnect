@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-#$Id: track.pl,v 1.6 2003/06/18 17:09:39 jay.powers Exp $
+#$Id: track.pl,v 1.8 2003/09/03 16:03:12 jay.powers Exp $
 use Business::FedEx::DirectConnect;
 use strict;
 my $t = new Business::FedEx::DirectConnect(uri=> 'https://gatewaybeta.fedex.com/GatewayDC'
@@ -10,7 +10,7 @@ my $t = new Business::FedEx::DirectConnect(uri=> 'https://gatewaybeta.fedex.com/
 				,Debug=>1
 				);
 
-$t->set_data(5000, 29 =>'790913902411') or die $t->errstr;
+$t->set_data(5000, 29 =>'790836586591') or die $t->errstr;
 
 $t->transaction or die $t->errstr;
 
