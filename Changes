@@ -1,4 +1,4 @@
-#$Id: Changes,v 1.6 2003/02/10 03:10:46 jay.powers Exp $
+#$Id: Changes,v 1.7 2003/02/23 13:32:25 jay.powers Exp $
 Revision history for Perl extension Business::FedEx::DirectConnect.
 
 0.01  Tue Sep  3 10:58:19 2002
@@ -26,10 +26,13 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 	- Removed the 's' on trans 1201, 1202
 	
 0.06 01/12/2003
-	- Dumb syntax error?
+	- syntax error?
 	
 0.08 02/08/2003
         - Fixed parsing issue with FedEx data to allow for return values with dashes
         - Thanks JTER
         - Removed the FE_ER hash no need for this with ATOM server
         - Fixes for perl 5.8
+
+0.09 02/23/2003
+	- Removed debug syntax

@@ -1,5 +1,5 @@
 # FedEx::Constants
-#$Id: Constants.pm,v 1.6 2003/02/10 03:10:46 jay.powers Exp $
+#$Id: Constants.pm,v 1.8 2003/02/23 13:32:25 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 #
@@ -13,7 +13,7 @@ use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
 @EXPORT = qw($FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.08';
+$VERSION = '0.09';
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
 #1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
@@ -236,7 +236,7 @@ our $FE_RE = {
 1266 => 'saturday_delivery_flag',
 1267 => 'saturday_pickup_flag',
 1268 => 'dry_ice_flag',
-1271 => 'shipper’s_load_and_count_slac',
+1271 => 'shippers_load_and_count_slac',
 1272 => 'booking_number',
 1273 => 'packaging_type',
 1274 => 'service_type',
@@ -425,7 +425,7 @@ case insesative on these hashes.
 
 =head1 EXPORT
 
-$FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ
+$FE_RE $FE_SE $FE_TT $FE_RQ
 
 =head1 AUTHORS
 

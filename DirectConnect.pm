@@ -1,5 +1,5 @@
 # FedEx::DirectConnect
-#$Id: DirectConnect.pm,v 1.6 2003/02/10 03:10:46 jay.powers Exp $
+#$Id: DirectConnect.pm,v 1.7 2003/02/23 13:32:25 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 # 
@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.08';
+$VERSION = '0.09';
 
 use strict;
 
@@ -61,7 +61,7 @@ sub transaction {
 	if (@_) {
 		$self->{sbuf} = shift;
 	}
-	if (! exists $self->{UTI}) { # Find the UTI
+	if (!exists $self->{UTI}) { # Find the UTI
 		my $tmp = $self->{sbuf};
 		$tmp =~ s/0,"([0-9]*).*"/$1/;
 		for my $utis (keys %{$FE_TT}) {
@@ -86,9 +86,6 @@ sub transaction {
 	if ($self->_send())	{ # send POST to FedEx	
 		$self->{rbuf} =~ s/\s+$//g if ($self->{rbuf} =~ /\s+$/); # get rid of the extra spaces
 		$self->_split_data();
-		use Data::Dumper;
-		print Dumper($self->{rHash});
-		die;
 		# Check for Errors from FedEx
 		if (exists $self->{rHash}->{2}) {
 			$self->errstr("FedEx Transaction Error: " . $self->{rHash}->{3});
