@@ -12,3 +12,8 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 	- Regex bug on line 101. Thanks Wayne
 	- added a little more documentation
 	- UTI 3000 changed to FDXE
+	
+0.04 09/23/2001
+	- Fixex a few of the codes in Constants
+	- FedEx Transaction Error was not working properly
+	- checked for (99,"") request terminator when sending a transaction.

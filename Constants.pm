@@ -13,7 +13,7 @@ use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
 @EXPORT = qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.03'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
+$VERSION = '0.04'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
 #1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
@@ -32,7 +32,7 @@ our $FE_TT = {
 2016 => ['021','FDXE'],
 2017 => ['022','FDXE'],
 2018 => ['019','FDXE'],
-3000 => ['021','FDXE'],
+3000 => ['021','FDXG'],
 3001 => ['023','FDXG'],
 3003 => ['211',''],
 5000 => ['402',''],
@@ -40,11 +40,13 @@ our $FE_TT = {
 };
 
 our $FE_RQ = {
-2018 => [0,10,498,3025,47,9,17,50,24],
-2017 => [0,10,498,3025,8,9,117,16,17,50,75,1274,1401,1333],
-2016 => [0,10,498,3025,5,7,8,9,32,117,183,13,18,50,24,68,23,1273,1401,1333],
-1005 => [0,10,498,3025,29],
 1002 => [0,10,498,3025,1007,1366],
+1005 => [0,10,498,3025,29],
+2016 => [0,10,498,3025,5,7,8,9,32,117,183,13,18,50,24,68,23,1273,1401,1333],
+2017 => [0,10,498,3025,8,9,117,16,17,50,75,1274,1401,1333],
+2018 => [0,10,498,3025,47,9,17,50,24],
+3000 => [0,10,498,3025,5,7,8,9,32,117,183,13,18,50,24,68,23,1273,1401,1333],
+3001 => [0,10,29,498,3025],
 3003 => [0,10,4003,4008,4011,4012,4013,4014,4015],
 5000 => [0,10,498,3025,24,29],
 5001 => [0,10,498,3025,24,29]
@@ -153,7 +155,7 @@ our $FE_RE = {
 116 => 'package_total',
 117 => 'sender_country_code',
 118 => 'recipient_irs',
-120 => 'ci_marks_and',
+120 => 'ci_marks_and_numbers',
 169 => 'importer_country',
 170 => 'importer_name',
 171 => 'importer_company',
@@ -250,7 +252,7 @@ our $FE_RE = {
 1195 => 'payer_country_code',
 1200 => 'hold_at_location_hal_flag',
 1201 => 'senders_email_address',
-1202 => 'recipient’s_email_address',
+1202 => 'recipients_email_address',
 1203 => 'optional_ship_alert_message',
 1204 => 'ship_alert_email_address',
 1206 => 'ship_alert_notification_flag',
@@ -434,7 +436,7 @@ __END__
 
 =head1 NAME
 
-Business::Fedex::Constants - FedEx Lookup Codes 
+Business::FedEx::Constants - FedEx Lookup Codes 
 
 =head1 DESCRIPTION
 

@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.03'; # $Id: DirectConnect.pm,v 1.1.1.1 2002/09/10 13:14:10 jay.powers Exp 
+$VERSION = '0.04'; # $Id: DirectConnect.pm,v 1.1.1.1 2002/09/10 13:14:10 jay.powers Exp 
 
 use strict;
 
@@ -61,7 +61,8 @@ sub transaction {
 	,'Referer' => $self->{referer}
 	,'Accept' => "image/gif,image/jpeg,image/pjpeg,text/plain,text/html,*/*"
 	,'Content-Type' => "image/gif"
-	,'Content-Length' => $bufferLength);
+	,'Content-Length' => $bufferLength);	
+	$self->{sbuf} .= '99,""' unless ($self->{sbuf} =~ /99,\"\"$/);
 	$req->content($self->{sbuf});
 	print $req->as_string() if ($self->{Debug});
 	# Pass request to the user agent and get a response back
@@ -76,8 +77,8 @@ sub transaction {
 	$self->{rbuf} =~ s/\s+$//g; # get rid of the extra spaces
 	$self->_split_data();
 	# Check for Errors from FedEx
-	if ($self->{rHash}->{transaction_error_code}) {
-		$self->errstr("FedEx Transaction Error: " . $self->{rHash}->{transaction_error_message});
+	if ($self->{rHash}->{2}) {
+		$self->errstr("FedEx Transaction Error: " . $self->{rHash}->{3});
 		return 0;
 	}
 	return 1;
@@ -192,7 +193,7 @@ __END__
 
 =head1 NAME
 
-Business::Fedex::DirectConnect - FedEx Ship Manager Direct Connect
+Business::FedEx::DirectConnect - FedEx Ship Manager Direct Connect
 
 =head1 SYNOPSIS
 
