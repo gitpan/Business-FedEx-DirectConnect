@@ -13,7 +13,7 @@ use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
 @EXPORT = qw($FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.10';
+$VERSION = '0.11';
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
 #1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
@@ -262,7 +262,7 @@ our $FE_RE = {
 1343 => 'broker_email_address',
 1344 => 'broker_fax_number',
 1346 => 'emerge_shipment_identifier',
-1347 => 'emerge_merchant_identifier';
+1347 => 'emerge_merchant_identifier',
 1349 => 'aes_filing_status',
 1350 => 'xtn_suffix_number',
 1352 => 'sender_ein_ssn_identificator',
@@ -379,7 +379,7 @@ our $FE_RE = {
 1734 => 'tracking_activity_line_14',
 1735 => 'tracking_activity_line_15',
 2254 => 'recipient_fax_number',
-2382 => 'return_shipment_indicator'
+2382 => 'return_shipment_indicator',
 3000 => 'cod_type_collection',
 3001 => 'fedex_ground_purchase_order',
 3002 => 'fedex_ground_invoice',

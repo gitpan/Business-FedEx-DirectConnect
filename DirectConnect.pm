@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.10';
+$VERSION = '0.11';
 
 use strict;
 
