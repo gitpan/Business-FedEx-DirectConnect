@@ -1,4 +1,4 @@
-#$Id: Changes,v 1.12 2003/06/18 17:09:20 jay.powers Exp $
+#$Id: Changes,v 1.13 2003/06/20 00:29:36 jay.powers Exp $
 Revision history for Perl extension Business::FedEx::DirectConnect.
 
 0.01  Tue Sept  3 10:58:19 2002
@@ -119,4 +119,8 @@ Revision history for Perl extension Business::FedEx::DirectConnect.
 0.16 06/18/03
         - Fixed the example transaction
         - Return true when there is no error in &transaction
+
+0.17 06/18/03
+        - Removed the Account#, Meter# requirements in &transaction
+        - Wrong hash lookup for values with -'s in set_data line 49
         

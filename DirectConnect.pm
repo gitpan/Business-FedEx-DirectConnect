@@ -1,5 +1,5 @@
 # FedEx::DirectConnect
-#$Id: DirectConnect.pm,v 1.13 2003/06/18 17:09:20 jay.powers Exp $
+#$Id: DirectConnect.pm,v 1.15 2003/06/20 00:29:36 jay.powers Exp $
 # Copyright (c) 2003 Jay Powers
 # All rights reserved.
 # 
@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.16';
+$VERSION = '0.17';
 
 use strict;
 
@@ -35,7 +35,7 @@ sub set_data {
 	my $self = shift;
 	$self->{UTI} = shift;
 	my %args = @_;
-	if (!$self->{UTI}) {		
+	if (!$self->{UTI}) {
 		$self->errstr("Error: You must provide a valid UTI.");
 		return undef;
 	}
@@ -43,10 +43,10 @@ sub set_data {
 	$self->{sbuf} .= '0,"' . $FE_TT->{$self->{UTI}}[0] . '"' if ($FE_TT->{$self->{UTI}}[0]);
 	$self->{sbuf} .= '3025,"' . $FE_TT->{$self->{UTI}}[1].'"' if ($FE_TT->{$self->{UTI}}[1]);
 	$self->{sbuf} .= '10,"' . $self->{acc} . '"' if ($self->{acc});
-	$self->{sbuf} .= '498,"' .$self->{meter}. '"' if ($self->{meter});	
+	$self->{sbuf} .= '498,"' .$self->{meter}. '"' if ($self->{meter});
 	foreach (keys %args) {
-		if (/^[0-9]+\-?\d?$/) { #let users use the hyphenated number fields
-			$self->{sbuf} .= join(',',$_,'"'.$args{$_}.'"') if exists $FE_RE->{$_};
+		if (/^([0-9]+)\-?\d?$/) { #let users use the hyphenated number fields
+			$self->{sbuf} .= join(',',$_,'"'.$args{$_}.'"') if exists $FE_RE->{$1};
 		} else {
 			$self->{sbuf} .= join(',',$FE_SE->{lc($_)},'"'.$args{$_}.'"') if exists $FE_SE->{lc($_)};
 		}
@@ -74,14 +74,6 @@ sub transaction {
 		$self->errstr("Error: You must provide data to send to FedEx.");
 		return undef;
 	}
-	if (!$self->{acc}) {
-		$self->errstr("Error: You must provide a valid FedEx account number.");
-		return undef;
-	}
-	if (!$self->{meter}) {
-		$self->errstr("Error: You must provide a valid FedEx meter number.");
-		return undef;
-	}
 
 	if ($self->_send())	{ # send POST to FedEx
 		$self->{rbuf} =~ s/\s+$//g if ($self->{rbuf} =~ /\s+$/); # get rid of the extra spaces
@@ -100,7 +92,7 @@ sub transaction {
 
 # Send POST request to FedEx API
 sub _send {	
-    my $self = shift;
+        my $self = shift;
 	my $ua = LWP::UserAgent->new(timeout => 10);
 	my $len = length($self->{sbuf});
 	print "Sending ". $self->{sbuf} . "\n" if ($self->{Debug});
