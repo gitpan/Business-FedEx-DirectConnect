@@ -1,6 +1,6 @@
 # FedEx::Constants
-#$Id$
-# Copyright (c) 2002 Jay Powers
+#$Id: Constants.pm,v 1.3 2003/01/12 18:39:36 jay.powers Exp $
+# Copyright (c) 2003 Jay Powers
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
@@ -13,7 +13,7 @@ use vars qw(@ISA @EXPORT $VERSION);
 
 @ISA = ('Exporter');
 @EXPORT = qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ);
-$VERSION = '0.05'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
+$VERSION = '0.06'; # $Id: Constants.pm,v 1.1.1.1 2002/08/29 17:12:10 jay.powers Exp 
 # Here are all the UTI codes from FedEx
 #1002 = 007 / 107 FDXG End-of-day close
 #1005 = 023 / 123 FDXE FedEx Express Delete-A-Package
@@ -471,7 +471,7 @@ Jay Powers, jay@vermonster.com
 
 L<http://www.vermonster.com/perl>
 
-Copyright (c) 2002 Jay Powers
+Copyright (c) 2003 Jay Powers
 
 All rights reserved.
 

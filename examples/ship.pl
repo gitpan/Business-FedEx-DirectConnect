@@ -1,3 +1,6 @@
+#!/usr/bin/perl -w
+#$Id: ship.pl,v 1.2 2003/01/08 20:11:56 jay.powers Exp $
+use strict;
 use Business::FedEx::DirectConnect;
 
 my $t = Business::FedEx::DirectConnect->new(uri=>'https://gatewaybeta.fedex.com/GatewayDc'

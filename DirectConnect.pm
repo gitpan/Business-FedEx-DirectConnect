@@ -1,6 +1,6 @@
 # FedEx::DirectConnect
-#$Id$
-# Copyright (c) 2002 Jay Powers
+#$Id: DirectConnect.pm,v 1.3 2003/01/12 18:39:36 jay.powers Exp $
+# Copyright (c) 2003 Jay Powers
 # All rights reserved.
 # 
 # This program is free software; you can redistribute it and/or
@@ -11,7 +11,7 @@ package Business::FedEx::DirectConnect; #must be in Business/FedEx
 use Business::FedEx::Constants qw($FE_ER $FE_RE $FE_SE $FE_TT $FE_RQ); # get all the FedEx return codes
 use LWP::UserAgent;
 
-$VERSION = '0.05'; # $Id: DirectConnect.pm,v 1.1.1.1 2002/09/10 13:14:10 jay.powers Exp 
+$VERSION = '0.06';
 
 use strict;
 
@@ -30,8 +30,6 @@ sub new {
 				,@_ };
 	bless ($self, $class);
 }
-# Check the fedex connection
-sub connection
 # Send a call to FedEx
 sub transaction {
 	my $self = shift;
@@ -100,8 +98,7 @@ sub set_data {
 	$self->{sbuf} .= '10,"' . $self->{acc} . '"' if ($self->{acc});
 	$self->{sbuf} .= '498,"' .$self->{meter}. '"' if ($self->{meter});	
 	foreach (keys %args) {
-		#print $FE_SE->{lc($_)}. "\n";
-		if (/^[0-9]+$/) { #let users use the number fields
+		if (/^[0-9-]+$/) { #let users use the hyphenated number fields
 			$self->{sbuf} .= join(',',$_,'"'.$args{$_}.'"');
 		} else {
 			$self->{sbuf} .= join(',',$FE_SE->{lc($_)},'"'.$args{$_}.'"');
@@ -166,10 +163,10 @@ sub lookup {
 	my $self = shift;
 	my $code = shift;
 	if ($code =~ m/^[0-9]+$/) {
-		print "Looking for " . $code if ($self->{Debug});
+		print "Looking for " . $code . "\n" if ($self->{Debug});
 		return $self->{rHash}->{$code};
 	} else {
-		print "Looking for " . lc($code) if ($self->{Debug});
+		print "Looking for " . lc($code) . "\n" if ($self->{Debug});
 		return $self->{rHash}->{$FE_SE->{lc($code)}};
 	}
 }
@@ -372,7 +369,7 @@ Returns a hash of the FedEx reply values
 
 	my $stuff= $t->hash_ret;
 
-	foreach (keys %$stuff) {
+	foreach (keys %{$stuff}) {
 		print $_. ' => ' . $stuff->{$_} . "\n";
 	}
 
@@ -384,7 +381,7 @@ Jay Powers, <F<jay@vermonster.com>>
 
 L<http://www.vermonster.com/perl>
 
-Copyright (c) 2002 Jay Powers
+Copyright (c) 2003 Jay Powers
 
 All rights reserved.
 
